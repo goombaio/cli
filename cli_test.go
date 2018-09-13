@@ -76,13 +76,13 @@ func TestCLI_Usage(t *testing.T) {
 
 	c.Usage()
 
-	expected := fmt.Sprintf(`usage: %s [-version] [-help] <command> <args>
-
-Flags:
-  -version	Show version information
-  -help	Show help
-
-Use %s [command] -help for more informatino about a command`, programName, programName)
+	expected := fmt.Sprintf("usage: %s [-version] [-help] <command> <args>\n", programName)
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("Flags:\n")
+	expected += fmt.Sprintf("  -version\tShow version information\n")
+	expected += fmt.Sprintf("  -help\tShow help\n")
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("Use %s [command] -help for more information about a command\n", programName)
 	if buf.String() != expected {
 		t.Fatalf("Expected %q but got %q", expected, buf.String())
 	}
