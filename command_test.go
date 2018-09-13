@@ -32,10 +32,6 @@ func TestCommand(t *testing.T) {
 	if command1.Name != expected {
 		t.Fatalf("Expected command name %s but got %s", expected, command1.Name)
 	}
-
-	if len(command1.Commands) != 0 {
-		t.Fatalf("Command expected to have 0 subcommands but got %d", len(command1.Commands))
-	}
 }
 
 func TestCommand_AddSubCommand(t *testing.T) {
@@ -43,10 +39,6 @@ func TestCommand_AddSubCommand(t *testing.T) {
 
 	subcommand1 := cli.NewCommand("subcommand_name")
 	command1.AddSubCommand(subcommand1)
-
-	if len(command1.Commands) != 1 {
-		t.Fatalf("Command expected to have 1 subcommands but got %d", len(command1.Commands))
-	}
 }
 
 func TestCommand_Run(t *testing.T) {

@@ -25,7 +25,7 @@ import (
 // Command ...
 type Command struct {
 	Name     string
-	Commands []*Command
+	commands []*Command
 	output   io.Writer
 }
 
@@ -33,7 +33,7 @@ type Command struct {
 func NewCommand(name string) *Command {
 	cmd := &Command{
 		Name:     name,
-		Commands: make([]*Command, 0),
+		commands: make([]*Command, 0),
 		output:   os.Stderr,
 	}
 
@@ -47,7 +47,7 @@ func (c *Command) SetOutput(output io.Writer) {
 
 // AddSubCommand ...
 func (c *Command) AddSubCommand(cmd *Command) {
-	c.Commands = append(c.Commands, cmd)
+	c.commands = append(c.commands, cmd)
 }
 
 // Run ...
