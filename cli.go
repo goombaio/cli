@@ -77,7 +77,7 @@ func (c *CLI) SetOutput(output io.Writer) {
 
 // Usage ...
 func (c *CLI) Usage() {
-	fmt.Fprintf(c.output, "usage: %s [-version] [-help] <command> <args>\n", c.ProgramName)
+	fmt.Fprintf(c.output, "usage: %s [-version] [-help] <command> <args>\n", c.ProgramName)
 	fmt.Fprintf(c.output, "\n")
 	fmt.Fprintf(c.output, "Flags:\n")
 	fmt.Fprintf(c.output, "  --version\tShow version information\n")
