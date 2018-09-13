@@ -17,10 +17,16 @@
 
 package cli
 
+import (
+	"io"
+	"os"
+)
+
 // Command ...
 type Command struct {
 	Name     string
 	Commands []*Command
+	output   io.Writer
 }
 
 // NewCommand ...
@@ -28,9 +34,15 @@ func NewCommand(name string) *Command {
 	cmd := &Command{
 		Name:     name,
 		Commands: make([]*Command, 0),
+		output:   os.Stderr,
 	}
 
 	return cmd
+}
+
+// SetOutput ...
+func (c *Command) SetOutput(output io.Writer) {
+	c.output = output
 }
 
 // AddSubCommand ...

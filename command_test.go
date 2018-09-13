@@ -18,6 +18,7 @@
 package cli_test
 
 import (
+	"io/ioutil"
 	"testing"
 
 	"github.com/goombaio/cli"
@@ -37,15 +38,6 @@ func TestCommand(t *testing.T) {
 	}
 }
 
-func TestCommand_Run(t *testing.T) {
-	command1 := cli.NewCommand("command1")
-
-	err := command1.Run()
-	if err != nil {
-		t.Fatalf("Expected no error but got %s", err)
-	}
-}
-
 func TestCommand_AddSubCommand(t *testing.T) {
 	command1 := cli.NewCommand("command1")
 
@@ -54,5 +46,16 @@ func TestCommand_AddSubCommand(t *testing.T) {
 
 	if len(command1.Commands) != 1 {
 		t.Fatalf("Command expected to have 1 subcommands but got %d", len(command1.Commands))
+	}
+}
+
+func TestCommand_Run(t *testing.T) {
+	command1 := cli.NewCommand("command1")
+
+	command1.SetOutput(ioutil.Discard)
+
+	err := command1.Run()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
 	}
 }
