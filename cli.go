@@ -17,7 +17,9 @@
 
 package cli
 
-import "fmt"
+import (
+	"os"
+)
 
 // CLI is the main entry point of a CLI application
 type CLI struct {
@@ -28,7 +30,7 @@ type CLI struct {
 // NewCLI ...
 func NewCLI() *CLI {
 	cli := &CLI{
-		ProgramName: "",
+		ProgramName: os.Args[0],
 		Commands:    make([]*CommandInterface, 0),
 	}
 
@@ -41,6 +43,7 @@ func (c *CLI) AddCommand(cmd *CommandInterface) {
 }
 
 // Run ...
-func (c *CLI) Run() {
-	fmt.Printf("Run %s", c.ProgramName)
+func (c *CLI) Run() error {
+
+	return nil
 }

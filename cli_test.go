@@ -18,20 +18,33 @@
 package cli_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/goombaio/cli"
 )
 
-// ExampleRoot_Test ...
 func TestCLI(t *testing.T) {
 	cli := cli.NewCLI()
 
-	if cli.ProgramName != "" {
-		t.Fatalf("Expected a blank string but got %s", cli.ProgramName)
-	}
-
 	if len(cli.Commands) != 0 {
 		t.Fatalf("Expected 0 commands but got %d", len(cli.Commands))
+	}
+}
+
+func TestCLI_Run(t *testing.T) {
+	programName := "cliprogram"
+
+	os.Args = []string{programName}
+
+	cli := cli.NewCLI()
+
+	if cli.ProgramName != programName {
+		t.Fatalf("Expected program name %s but got %s", programName, cli.ProgramName)
+	}
+
+	err := cli.Run()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
 	}
 }

@@ -32,3 +32,12 @@ func TestCommand(t *testing.T) {
 		t.Fatalf("Expected command name %s but got %s", expected, command1.Name)
 	}
 }
+
+func TestCommand_Run(t *testing.T) {
+	command1 := cli.NewCommand("command1")
+
+	err := command1.Run()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+}

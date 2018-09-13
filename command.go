@@ -17,8 +17,6 @@
 
 package cli
 
-import "fmt"
-
 // CommandInterface ...
 type CommandInterface interface {
 	Run()
@@ -47,6 +45,7 @@ func (c *Command) AddCommand(cmd *CommandInterface) {
 }
 
 // Run ...
-func (c *Command) Run() {
-	fmt.Printf("Run %s", c.Name)
+func (c *Command) Run() error {
+
+	return nil
 }
