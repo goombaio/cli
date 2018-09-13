@@ -19,21 +19,34 @@ package cli
 
 import "fmt"
 
+// CommandInterface ...
+type CommandInterface interface {
+	Run()
+	AddCommand(cmd *Command)
+}
+
 // Command ...
 type Command struct {
-	Name string
+	Name        string
+	SubCommands []*CommandInterface
 }
 
 // NewCommand ...
 func NewCommand(name string) *Command {
-	command := &Command{
-		Name: name,
+	cmd := &Command{
+		Name:        name,
+		SubCommands: make([]*CommandInterface, 0),
 	}
 
-	return command
+	return cmd
+}
+
+// AddCommand ...
+func (c *Command) AddCommand(cmd *CommandInterface) {
+	c.SubCommands = append(c.SubCommands, cmd)
 }
 
 // Run ...
-func (c *Command) Run(args []string) {
-	fmt.Printf("Run %s with args %s", c.Name, args)
+func (c *Command) Run() {
+	fmt.Printf("Run %s", c.Name)
 }

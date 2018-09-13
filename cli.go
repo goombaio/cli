@@ -19,11 +19,6 @@ package cli
 
 import "fmt"
 
-// CommandInterface ...
-type CommandInterface interface {
-	Run(cmd *Command, args []string)
-}
-
 // CLI is the main entry point of a CLI application
 type CLI struct {
 	ProgramName string
@@ -41,11 +36,11 @@ func NewCLI() *CLI {
 }
 
 // AddCommand ...
-func (c *CLI) AddCommand(command *CommandInterface) {
-	c.Commands = append(c.Commands, command)
+func (c *CLI) AddCommand(cmd *CommandInterface) {
+	c.Commands = append(c.Commands, cmd)
 }
 
 // Run ...
-func (c *CLI) Run(args []string) {
-	fmt.Printf("Run %s with args %s", c.ProgramName, args)
+func (c *CLI) Run() {
+	fmt.Printf("Run %s", c.ProgramName)
 }
