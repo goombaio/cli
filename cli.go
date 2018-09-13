@@ -67,6 +67,8 @@ func (c *CLI) Run() error {
 		}
 	*/
 
+	fmt.Println("foo")
+
 	return nil
 }
 
