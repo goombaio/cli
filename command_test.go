@@ -23,8 +23,6 @@ import (
 	"github.com/goombaio/cli"
 )
 
-type SubCommand struct{}
-
 // ExampleRoot_Test ...
 func TestCommand(t *testing.T) {
 	command1 := cli.NewCommand("command1")
