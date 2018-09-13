@@ -23,6 +23,8 @@ import (
 	"github.com/goombaio/cli"
 )
 
+type SubCommand struct{}
+
 // ExampleRoot_Test ...
 func TestCommand(t *testing.T) {
 	command1 := cli.NewCommand("command1")
@@ -39,5 +41,16 @@ func TestCommand_Run(t *testing.T) {
 	err := command1.Run()
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
+	}
+}
+
+func TestCommand_AddSubCommand(t *testing.T) {
+	command1 := cli.NewCommand("command1")
+
+	subcommand1 := cli.NewCommand("subcommand_name")
+	command1.AddSubCommand(subcommand1)
+
+	if len(command1.Commands) != 1 {
+		t.Fatalf("Command expected to have 1 subcommands but got %d", len(command1.Commands))
 	}
 }

@@ -17,31 +17,25 @@
 
 package cli
 
-// CommandInterface ...
-type CommandInterface interface {
-	Run()
-	AddCommand(cmd *Command)
-}
-
 // Command ...
 type Command struct {
-	Name        string
-	SubCommands []*CommandInterface
+	Name     string
+	Commands []*Command
 }
 
 // NewCommand ...
 func NewCommand(name string) *Command {
 	cmd := &Command{
-		Name:        name,
-		SubCommands: make([]*CommandInterface, 0),
+		Name:     name,
+		Commands: make([]*Command, 0),
 	}
 
 	return cmd
 }
 
-// AddCommand ...
-func (c *Command) AddCommand(cmd *CommandInterface) {
-	c.SubCommands = append(c.SubCommands, cmd)
+// AddSubCommand ...
+func (c *Command) AddSubCommand(cmd *Command) {
+	c.Commands = append(c.Commands, cmd)
 }
 
 // Run ...

@@ -25,10 +25,10 @@ import (
 )
 
 func TestCLI(t *testing.T) {
-	cli := cli.NewCLI()
+	c := cli.NewCLI()
 
-	if len(cli.Commands) != 0 {
-		t.Fatalf("Expected 0 commands but got %d", len(cli.Commands))
+	if len(c.Commands) != 0 {
+		t.Fatalf("Expected 0 commands but got %d", len(c.Commands))
 	}
 }
 
@@ -37,14 +37,30 @@ func TestCLI_Run(t *testing.T) {
 
 	os.Args = []string{programName}
 
-	cli := cli.NewCLI()
+	c := cli.NewCLI()
 
-	if cli.ProgramName != programName {
-		t.Fatalf("Expected program name %s but got %s", programName, cli.ProgramName)
+	if c.ProgramName != programName {
+		t.Fatalf("Expected program name %s but got %s", programName, c.ProgramName)
 	}
 
-	err := cli.Run()
+	err := c.Run()
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
+	}
+}
+
+func TestCLI_AddCommand(t *testing.T) {
+	programName := "cliprogram"
+
+	os.Args = []string{programName}
+
+	c := cli.NewCLI()
+
+	command1 := cli.NewCommand("command_name")
+
+	c.AddCommand(command1)
+
+	if len(c.Commands) != 1 {
+		t.Fatalf("CLI expected to have 1 command but got %d", len(c.Commands))
 	}
 }

@@ -24,21 +24,21 @@ import (
 // CLI is the main entry point of a CLI application
 type CLI struct {
 	ProgramName string
-	Commands    []*CommandInterface
+	Commands    []*Command
 }
 
 // NewCLI ...
 func NewCLI() *CLI {
 	cli := &CLI{
 		ProgramName: os.Args[0],
-		Commands:    make([]*CommandInterface, 0),
+		Commands:    make([]*Command, 0),
 	}
 
 	return cli
 }
 
 // AddCommand ...
-func (c *CLI) AddCommand(cmd *CommandInterface) {
+func (c *CLI) AddCommand(cmd *Command) {
 	c.Commands = append(c.Commands, cmd)
 }
 
