@@ -31,6 +31,10 @@ func TestCommand(t *testing.T) {
 	if command1.Name != expected {
 		t.Fatalf("Expected command name %s but got %s", expected, command1.Name)
 	}
+
+	if len(command1.Commands) != 0 {
+		t.Fatalf("Command expected to have 0 subcommands but got %d", len(command1.Commands))
+	}
 }
 
 func TestCommand_Run(t *testing.T) {
