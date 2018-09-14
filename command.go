@@ -19,8 +19,22 @@ package cli
 
 import (
 	"flag"
-	"fmt"
+	"html/template"
 	"io"
+)
+
+const (
+	// UsageTemplate ...
+	UsageTemplate = `usage: {{.ProgramName}} [-help] <command> [args]
+{{if .Commands}}
+Commands:
+{{range .Commands}}  {{.Name}}	{{.Description}}{{end}}
+{{end}}
+Flags:
+  -h, -help	Show help
+
+Use {{.ProgramName}} [command] -help for more information about a command
+`
 )
 
 // Command ...
@@ -83,26 +97,37 @@ func (c *Command) Execute() error {
 	c.flags.Usage = flag.Usage
 
 	flag.Parse()
-	c.flags.Parse(flag.Args())
+	err := c.flags.Parse(flag.Args())
+	if err != nil {
+		return err
+	}
 
-	err := c.Run()
+	err = c.Run()
 
 	return err
 }
 
 // Usage ...
 func (c *Command) Usage() {
-	fmt.Fprintf(c.flags.Output(), "usage: %s [-help] <command> [args]\n", c.flags.Name())
-	fmt.Fprintf(c.flags.Output(), "\n")
-	if len(c.commands) > 0 {
-		fmt.Fprintf(c.flags.Output(), "Commands:\n")
-		for _, command := range c.commands {
-			fmt.Fprintf(c.flags.Output(), "  %s\t%s\n", command.Name(), command.ShortDescription)
+	templateData := struct {
+		ProgramName string
+		Commands    []struct {
+			Name        string
+			Description string
 		}
-		fmt.Fprintf(c.flags.Output(), "\n")
+	}{
+		ProgramName: c.flags.Name(),
 	}
-	fmt.Fprintf(c.flags.Output(), "Flags:\n")
-	fmt.Fprintf(c.flags.Output(), "  -h, -help\tShow help\n")
-	fmt.Fprintf(c.flags.Output(), "\n")
-	fmt.Fprintf(c.flags.Output(), "Use %s [command] -help for more information about a command\n", c.flags.Name())
+	for _, command := range c.commands {
+		c := struct {
+			Name        string
+			Description string
+		}{
+			command.Name(),
+			command.ShortDescription,
+		}
+		templateData.Commands = append(templateData.Commands, c)
+	}
+	t := template.Must(template.New("usage").Parse(UsageTemplate))
+	_ = t.Execute(c.flags.Output(), templateData)
 }
