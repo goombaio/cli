@@ -28,7 +28,7 @@ func ExampleCommand() {
 	programName := "programName"
 	os.Args = []string{programName}
 
-	rootCommand := cli.NewCommand(programName)
+	rootCommand := cli.NewCommand(programName, "root Command")
 
 	rootCommand.SetOutput(os.Stdout)
 
@@ -45,7 +45,7 @@ func ExampleCommand() {
 		os.Exit(1)
 	}
 	// Output:
-	// usage: programName [-help] <command> <args>
+	// usage: programName [-help] <command> [args]
 	//
 	// Flags:
 	//   -h, -help	Show help
@@ -58,7 +58,7 @@ func ExampleCommand_arg() {
 
 	os.Args = []string{programName, "command"}
 
-	rootCommand := cli.NewCommand(programName)
+	rootCommand := cli.NewCommand(programName, "root Command")
 
 	rootCommand.SetOutput(os.Stdout)
 

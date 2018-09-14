@@ -25,7 +25,7 @@ import (
 )
 
 func main() {
-	rootCommand := cli.NewCommand("programName")
+	rootCommand := cli.NewCommand("programName", "root Command")
 	rootCommand.Run = func() error {
 		if len(rootCommand.Args()) == 0 {
 			rootCommand.Usage()
@@ -34,7 +34,7 @@ func main() {
 		return nil
 	}
 
-	subCommand := cli.NewCommand("subCommandName")
+	subCommand := cli.NewCommand("subCommandName", "Sub Command Short Description")
 	rootCommand.AddSubCommand(subCommand)
 
 	err := rootCommand.Execute()

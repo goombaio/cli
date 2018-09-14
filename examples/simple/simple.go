@@ -25,7 +25,7 @@ import (
 )
 
 func main() {
-	rootCommand := cli.NewCommand("simple")
+	rootCommand := cli.NewCommand("simple", "root Command")
 	rootCommand.Run = func() error {
 		if len(rootCommand.Args()) == 0 {
 			rootCommand.Usage()

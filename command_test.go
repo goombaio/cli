@@ -30,7 +30,7 @@ import (
 // ExampleRoot_Test ...
 func TestCommand(t *testing.T) {
 	programName := "programName"
-	rootCommand := cli.NewCommand(programName)
+	rootCommand := cli.NewCommand(programName, "root Command")
 
 	if rootCommand.Name() != programName {
 		t.Fatalf("Expected command name %s but got %s", programName, rootCommand.Name())
@@ -39,7 +39,7 @@ func TestCommand(t *testing.T) {
 
 func TestCommand_Execute(t *testing.T) {
 	programName := "programName"
-	rootCommand := cli.NewCommand(programName)
+	rootCommand := cli.NewCommand(programName, "root Command")
 
 	rootCommand.SetOutput(ioutil.Discard)
 
@@ -59,7 +59,7 @@ func TestCommand_Execute(t *testing.T) {
 
 func TestCommand_AddSubCommand(t *testing.T) {
 	programName := "programName"
-	rootCommand := cli.NewCommand(programName)
+	rootCommand := cli.NewCommand(programName, "root Command")
 
 	rootCommand.SetOutput(ioutil.Discard)
 
@@ -68,7 +68,7 @@ func TestCommand_AddSubCommand(t *testing.T) {
 	}
 
 	subCommandName := "subCommand"
-	subCommand := cli.NewCommand(subCommandName)
+	subCommand := cli.NewCommand(subCommandName, "Sub Command Short Description")
 
 	if subCommand.Name() != subCommandName {
 		t.Fatalf("Expected command name %s but got %s", subCommandName, subCommand.Name())
@@ -82,7 +82,7 @@ func TestCommand_Execute_noflags_noargs(t *testing.T) {
 
 	os.Args = []string{programName}
 
-	rootCommand := cli.NewCommand(programName)
+	rootCommand := cli.NewCommand(programName, "root Command")
 
 	buf := new(bytes.Buffer)
 	rootCommand.SetOutput(buf)
@@ -104,7 +104,7 @@ func TestCommand_Execute_noflags_noargs(t *testing.T) {
 		t.Fatalf("Expected no error but got %s", err)
 	}
 
-	expected := fmt.Sprintf("usage: %s [-help] <command> <args>\n", rootCommand.Name())
+	expected := fmt.Sprintf("usage: %s [-help] <command> [args]\n", rootCommand.Name())
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Flags:\n")
 	expected += fmt.Sprintf("  -h, -help\tShow help\n")
@@ -120,7 +120,7 @@ func TestCommand_Execute_noflags_args(t *testing.T) {
 
 	os.Args = []string{programName, "command"}
 
-	rootCommand := cli.NewCommand(programName)
+	rootCommand := cli.NewCommand(programName, "root Command")
 
 	buf := new(bytes.Buffer)
 	rootCommand.SetOutput(buf)

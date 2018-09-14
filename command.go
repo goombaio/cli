@@ -25,16 +25,18 @@ import (
 
 // Command ...
 type Command struct {
-	flags    *flag.FlagSet
-	commands []*Command
-	Run      func() error
+	flags            *flag.FlagSet
+	commands         []*Command
+	ShortDescription string
+	Run              func() error
 }
 
 // NewCommand ...
-func NewCommand(name string) *Command {
+func NewCommand(name string, shortDescription string) *Command {
 	cmd := &Command{
-		commands: make([]*Command, 0),
-		flags:    flag.NewFlagSet(name, flag.ContinueOnError),
+		commands:         make([]*Command, 0),
+		flags:            flag.NewFlagSet(name, flag.ContinueOnError),
+		ShortDescription: shortDescription,
 	}
 
 	return cmd
@@ -80,7 +82,7 @@ func (c *Command) Usage() {
 	if len(c.commands) > 0 {
 		fmt.Fprintf(c.flags.Output(), "Commands:\n")
 		for _, command := range c.commands {
-			fmt.Fprintf(c.flags.Output(), "  %s\t%s short description\n", command.Name(), command.Name())
+			fmt.Fprintf(c.flags.Output(), "  %s\t%s\n", command.Name(), command.ShortDescription)
 		}
 		fmt.Fprintf(c.flags.Output(), "\n")
 	}
