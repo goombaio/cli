@@ -25,19 +25,23 @@ import (
 
 // Command ...
 type Command struct {
-	flags            *flag.FlagSet
-	commands         []*Command
 	ShortDescription string
-	Run              func() error
+
+	commands []*Command
+	flags    *flag.FlagSet
+
+	Run func() error
 }
 
 // NewCommand ...
 func NewCommand(name string, shortDescription string) *Command {
 	cmd := &Command{
-		commands:         make([]*Command, 0),
-		flags:            flag.NewFlagSet(name, flag.ContinueOnError),
 		ShortDescription: shortDescription,
-		Run:              func() error { return nil },
+
+		commands: make([]*Command, 0),
+		flags:    flag.NewFlagSet(name, flag.ContinueOnError),
+
+		Run: func() error { return nil },
 	}
 
 	return cmd
