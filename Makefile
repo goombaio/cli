@@ -71,6 +71,8 @@ clean:			## Delete generated development environment
 	rm -rf ${BINARY}-*-*.exe
 	rm -rf ${BINARY}-*-*.zip
 	rm -rf coverage-all.out
+	# Examples
+	rm -rf examples/simple
 
 # Docs
 
