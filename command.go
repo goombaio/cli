@@ -75,7 +75,7 @@ func (c *Command) Execute() error {
 
 // Usage ...
 func (c *Command) Usage() {
-	fmt.Fprintf(c.flags.Output(), "usage: %s [-version] [-help] <command> <args>\n", c.flags.Name())
+	fmt.Fprintf(c.flags.Output(), "usage: %s [-help] <command> <args>\n", c.flags.Name())
 	fmt.Fprintf(c.flags.Output(), "\n")
 	fmt.Fprintf(c.flags.Output(), "Flags:\n")
 	fmt.Fprintf(c.flags.Output(), "  -h, -help\tShow help\n")

@@ -28,11 +28,34 @@ go get -u github.com/goombaio/cli
 package main
 
 import (
+    "fmt"
+    "os"
+
     "github.com/goombaio/cli"
 )
 
 func main() {
-    
+    rootCommand := cli.NewCommand("programName")
+    rootCommand.Run = func() error {
+        if len(rootCommand.Args()) == 0 {
+            rootCommand.Usage()
+        }
+
+        return nil
+    }
+
+    err := rootCommand.Execute()
+    if err != nil {
+        fmt.Println("ERROR:", err)
+        os.Exit(1)
+    }
+    // Output:
+    // usage: programName [-help] <command> <args>
+    //
+    // Flags:
+    //   -h, -help  Show help
+    //
+    // Use programName [command] -help for more information about a command
 }
 ```
 

@@ -104,7 +104,7 @@ func TestCommand_Execute_noflags_noargs(t *testing.T) {
 		t.Fatalf("Expected no error but got %s", err)
 	}
 
-	expected := fmt.Sprintf("usage: %s [-version] [-help] <command> <args>\n", rootCommand.Name())
+	expected := fmt.Sprintf("usage: %s [-help] <command> <args>\n", rootCommand.Name())
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Flags:\n")
 	expected += fmt.Sprintf("  -h, -help\tShow help\n")

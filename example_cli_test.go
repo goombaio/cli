@@ -45,7 +45,7 @@ func ExampleCommand() {
 		os.Exit(1)
 	}
 	// Output:
-	// usage: programName [-version] [-help] <command> <args>
+	// usage: programName [-help] <command> <args>
 	//
 	// Flags:
 	//   -h, -help	Show help
