@@ -26,29 +26,29 @@ import (
 
 // CLI is the main entry point of a CLI application
 type CLI struct {
-	Name     string
-	Flags    *flag.FlagSet
-	args     []string
+	flags    *flag.FlagSet
 	commands []*Command
 }
 
 // NewCLI ...
 func NewCLI() *CLI {
 	cli := &CLI{
-		Name:     os.Args[0],
 		commands: make([]*Command, 0),
-		Flags:    flag.NewFlagSet(os.Args[0], flag.ContinueOnError),
-		args:     make([]string, 0),
+		flags:    flag.NewFlagSet(os.Args[0], flag.ContinueOnError),
 	}
 
 	flag.Usage = cli.Usage
-	cli.Flags.Usage = cli.Usage
+	cli.flags.Usage = flag.Usage
 
 	flag.Parse()
-
-	cli.args = flag.Args()
+	cli.flags.Parse(flag.Args())
 
 	return cli
+}
+
+// Name ...
+func (c *CLI) Name() string {
+	return c.flags.Name()
 }
 
 // AddCommand ...
@@ -58,7 +58,7 @@ func (c *CLI) AddCommand(cmd *Command) {
 
 // Run ...
 func (c *CLI) Run() error {
-	if len(c.args) == 0 {
+	if len(c.flags.Args()) == 0 {
 		c.Usage()
 		return nil
 	}
@@ -68,21 +68,21 @@ func (c *CLI) Run() error {
 
 // SetOutput ...
 func (c *CLI) SetOutput(output io.Writer) {
-	c.Flags.SetOutput(output)
+	c.flags.SetOutput(output)
 }
 
 // Usage ...
 func (c *CLI) Usage() {
-	fmt.Fprintf(c.Flags.Output(), "usage: %s [-version] [-help] <command> <args>\n", c.Name)
-	fmt.Fprintf(c.Flags.Output(), "\n")
-	fmt.Fprintf(c.Flags.Output(), "Flags:\n")
+	fmt.Fprintf(c.flags.Output(), "usage: %s [-version] [-help] <command> <args>\n", c.flags.Name())
+	fmt.Fprintf(c.flags.Output(), "\n")
+	fmt.Fprintf(c.flags.Output(), "Flags:\n")
 	// fmt.Fprintf(c.output, "  -version\tShow version information\n")
-	fmt.Fprintf(c.Flags.Output(), "  -h, -help\tShow help\n")
-	fmt.Fprintf(c.Flags.Output(), "\n")
-	fmt.Fprintf(c.Flags.Output(), "Use %s [command] -help for more information about a command\n", c.Name)
+	fmt.Fprintf(c.flags.Output(), "  -h, -help\tShow help\n")
+	fmt.Fprintf(c.flags.Output(), "\n")
+	fmt.Fprintf(c.flags.Output(), "Use %s [command] -help for more information about a command\n", c.flags.Name())
 }
 
 // ShowVersion ...
 func (c *CLI) ShowVersion(version string, build string) {
-	fmt.Fprintf(c.Flags.Output(), "%s version %s build %s\n", c.Name, version, build)
+	fmt.Fprintf(c.flags.Output(), "%s version %s build %s\n", c.flags.Name(), version, build)
 }

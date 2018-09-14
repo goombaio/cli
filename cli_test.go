@@ -30,8 +30,8 @@ import (
 func TestCLI(t *testing.T) {
 	c := cli.NewCLI()
 
-	if c.Name == "" {
-		t.Fatalf("Expected program name %s but got %s", "", c.Name)
+	if c.Name() == "" {
+		t.Fatalf("Expected program name %s but got %s", "", c.Name())
 	}
 }
 
@@ -56,8 +56,8 @@ func TestCLI_Run(t *testing.T) {
 
 	c.SetOutput(ioutil.Discard)
 
-	if c.Name != Name {
-		t.Fatalf("Expected program name %s but got %s", Name, c.Name)
+	if c.Name() != Name {
+		t.Fatalf("Expected program name %s but got %s", Name, c.Name())
 	}
 
 	err := c.Run()
@@ -81,13 +81,13 @@ func TestCLI_Run_noflags_noargs(t *testing.T) {
 		t.Fatalf("Expected no error but got %s", err)
 	}
 
-	expected := fmt.Sprintf("usage: %s [-version] [-help] <command> <args>\n", Name)
+	expected := fmt.Sprintf("usage: %s [-version] [-help] <command> <args>\n", c.Name())
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Flags:\n")
 	// expected += fmt.Sprintf("  -version\tShow version information\n")
 	expected += fmt.Sprintf("  -h, -help\tShow help\n")
 	expected += fmt.Sprintf("\n")
-	expected += fmt.Sprintf("Use %s [command] -help for more information about a command\n", Name)
+	expected += fmt.Sprintf("Use %s [command] -help for more information about a command\n", c.Name())
 	if buf.String() != expected {
 		t.Fatalf("Expected %q but got %q", expected, buf.String())
 	}
@@ -117,6 +117,8 @@ func TestCLI_Run_noflags_args(t *testing.T) {
 func TestCLI_Usage(t *testing.T) {
 	Name := "cliprogram"
 
+	os.Args = []string{Name}
+
 	c := cli.NewCLI()
 
 	buf := new(bytes.Buffer)
@@ -124,13 +126,13 @@ func TestCLI_Usage(t *testing.T) {
 
 	c.Usage()
 
-	expected := fmt.Sprintf("usage: %s [-version] [-help] <command> <args>\n", Name)
+	expected := fmt.Sprintf("usage: %s [-version] [-help] <command> <args>\n", c.Name())
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Flags:\n")
 	// expected += fmt.Sprintf("  -version\tShow version information\n")
 	expected += fmt.Sprintf("  -h, -help\tShow help\n")
 	expected += fmt.Sprintf("\n")
-	expected += fmt.Sprintf("Use %s [command] -help for more information about a command\n", Name)
+	expected += fmt.Sprintf("Use %s [command] -help for more information about a command\n", c.Name())
 	if buf.String() != expected {
 		t.Fatalf("Expected %q but got %q", expected, buf.String())
 	}
