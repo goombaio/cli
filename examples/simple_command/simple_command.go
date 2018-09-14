@@ -35,7 +35,7 @@ func main() {
 	}
 
 	subCommand := cli.NewCommand("subCommandName", "Sub Command Short Description")
-	rootCommand.AddSubCommand(subCommand)
+	rootCommand.AddCommand(subCommand)
 
 	err := rootCommand.Execute()
 	if err != nil {

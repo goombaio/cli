@@ -58,13 +58,18 @@ func (c *Command) Arg(id int) string {
 	return c.flags.Arg(id)
 }
 
+// Output ...
+func (c *Command) Output() io.Writer {
+	return c.flags.Output()
+}
+
 // SetOutput ...
 func (c *Command) SetOutput(output io.Writer) {
 	c.flags.SetOutput(output)
 }
 
-// AddSubCommand ...
-func (c *Command) AddSubCommand(cmd *Command) {
+// AddCommand ...
+func (c *Command) AddCommand(cmd *Command) {
 	c.commands = append(c.commands, cmd)
 }
 

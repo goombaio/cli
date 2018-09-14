@@ -20,6 +20,7 @@ package cli_test
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"testing"
 
@@ -28,7 +29,7 @@ import (
 
 func TestCommand(t *testing.T) {
 	programName := "programName"
-	programShortDescription := "root Command"
+	programShortDescription := "root Command Description"
 
 	rootCommand := cli.NewCommand(programName, programShortDescription)
 	err := rootCommand.Execute()
@@ -39,7 +40,7 @@ func TestCommand(t *testing.T) {
 
 func TestCommand_Name(t *testing.T) {
 	programName := "programName"
-	rootCommand := cli.NewCommand(programName, "root Command")
+	rootCommand := cli.NewCommand(programName, "root Command Description")
 
 	if rootCommand.Name() != programName {
 		t.Fatalf("Expected command name %s but got %s", programName, rootCommand.Name())
@@ -53,7 +54,7 @@ func TestCommand_Name(t *testing.T) {
 
 func TestCommand_Args_noargs(t *testing.T) {
 	programName := "programName"
-	programShortDescription := "root Command"
+	programShortDescription := "root Command Description"
 
 	os.Args = []string{programName}
 
@@ -71,7 +72,7 @@ func TestCommand_Args_noargs(t *testing.T) {
 
 func TestCommand_Args_args(t *testing.T) {
 	programName := "programName"
-	programShortDescription := "root Command"
+	programShortDescription := "root Command Description"
 	arg1 := "arg1"
 	arg2 := "arg2"
 
@@ -91,7 +92,7 @@ func TestCommand_Args_args(t *testing.T) {
 
 func TestCommand_Arg(t *testing.T) {
 	programName := "programName"
-	programShortDescription := "root Command"
+	programShortDescription := "root Command Description"
 	arg1 := "arg1"
 	arg2 := "arg2"
 
@@ -117,9 +118,22 @@ func TestCommand_Arg(t *testing.T) {
 	}
 }
 
+func TestCommand_Output(t *testing.T) {
+	programName := "programName"
+	programShortDescription := "root Command Description"
+
+	rootCommand := cli.NewCommand(programName, programShortDescription)
+	rootCommand.SetOutput(ioutil.Discard)
+
+	output := rootCommand.Output()
+	if output != ioutil.Discard {
+		t.Fatalf("Expected ioutil.Discard but got %#v", output)
+	}
+}
+
 func TestCommand_SetOutput(t *testing.T) {
 	programName := "programName"
-	programShortDescription := "root Command"
+	programShortDescription := "root Command Description"
 
 	os.Args = []string{programName}
 
@@ -149,9 +163,9 @@ func TestCommand_SetOutput(t *testing.T) {
 	}
 }
 
-func TestCommand_AddSubCommand(t *testing.T) {
+func TestCommand_AddCommand(t *testing.T) {
 	programName := "programName"
-	programShortDescription := "root Command"
+	programShortDescription := "root Command Description"
 
 	rootCommand := cli.NewCommand(programName, programShortDescription)
 	rootCommand.Run = func() error {
@@ -164,9 +178,9 @@ func TestCommand_AddSubCommand(t *testing.T) {
 	rootCommand.SetOutput(buf)
 
 	subCommandName := "subCommand"
-	subCommand := cli.NewCommand(subCommandName, "Sub Command Short Description")
+	subCommand := cli.NewCommand(subCommandName, "Sub Command Description")
 
-	rootCommand.AddSubCommand(subCommand)
+	rootCommand.AddCommand(subCommand)
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -176,7 +190,7 @@ func TestCommand_AddSubCommand(t *testing.T) {
 	expected := fmt.Sprintf("usage: %s [-help] <command> [args]\n", rootCommand.Name())
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Commands:\n")
-	expected += fmt.Sprintf("  subCommand\tSub Command Short Description\n")
+	expected += fmt.Sprintf("  subCommand\tSub Command Description\n")
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Flags:\n")
 	expected += fmt.Sprintf("  -h, -help\tShow help\n")
@@ -187,20 +201,11 @@ func TestCommand_AddSubCommand(t *testing.T) {
 	}
 }
 
-/*
 func TestCommand_Execute(t *testing.T) {
 	programName := "programName"
-	rootCommand := cli.NewCommand(programName, "root Command")
+	rootCommand := cli.NewCommand(programName, "root Command Description")
 
 	rootCommand.SetOutput(ioutil.Discard)
-
-	if rootCommand.Name() != programName {
-		t.Fatalf("Expected command name %s but got %s", "command1", rootCommand.Name())
-	}
-
-	rootCommand.Run = func() error {
-		return nil
-	}
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -208,21 +213,16 @@ func TestCommand_Execute(t *testing.T) {
 	}
 }
 
-
-
 func TestCommand_Execute_noflags_noargs(t *testing.T) {
 	programName := "programName"
+	programShortDescription := "root Command Description"
 
 	os.Args = []string{programName}
 
-	rootCommand := cli.NewCommand(programName, "root Command")
+	rootCommand := cli.NewCommand(programName, programShortDescription)
 
 	buf := new(bytes.Buffer)
 	rootCommand.SetOutput(buf)
-
-	if rootCommand.Name() != programName {
-		t.Fatalf("Expected command name %s but got %s", "command1", rootCommand.Name())
-	}
 
 	rootCommand.Run = func() error {
 		if len(rootCommand.Args()) == 0 {
@@ -250,34 +250,23 @@ func TestCommand_Execute_noflags_noargs(t *testing.T) {
 
 func TestCommand_Execute_noflags_args(t *testing.T) {
 	programName := "programName"
+	programShortDescription := "root Command Description"
+	arg1 := "command"
 
-	os.Args = []string{programName, "command"}
+	os.Args = []string{programName, arg1}
 
-	rootCommand := cli.NewCommand(programName, "root Command")
-
-	buf := new(bytes.Buffer)
-	rootCommand.SetOutput(buf)
-
-	if rootCommand.Name() != programName {
-		t.Fatalf("Expected command name %s but got %s", "command1", rootCommand.Name())
-	}
-
-	rootCommand.Run = func() error {
-		if len(rootCommand.Args()) == 0 {
-			rootCommand.Usage()
-		}
-
-		return nil
-	}
+	rootCommand := cli.NewCommand(programName, programShortDescription)
 
 	err := rootCommand.Execute()
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
 
-	expected := fmt.Sprintf("")
-	if buf.String() != expected {
-		t.Fatalf("Expected %q but got %q", expected, buf.String())
+	if len(rootCommand.Args()) != 1 {
+		t.Fatalf("Expected 1 args but got %d", len(rootCommand.Args()))
+	}
+
+	if rootCommand.Arg(0) != arg1 {
+		t.Fatalf("Expected command but got %s", rootCommand.Arg(0))
 	}
 }
-*/
