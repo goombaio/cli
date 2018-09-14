@@ -29,8 +29,8 @@ func TestCommand(t *testing.T) {
 	command1 := cli.NewCommand("command1")
 
 	expected := "command1"
-	if command1.Name != expected {
-		t.Fatalf("Expected command name %s but got %s", expected, command1.Name)
+	if command1.Name() != expected {
+		t.Fatalf("Expected command name %s but got %s", expected, command1.Name())
 	}
 }
 
