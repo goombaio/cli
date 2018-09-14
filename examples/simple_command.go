@@ -27,7 +27,10 @@ import (
 func main() {
 	c := cli.NewCLI()
 
-	err := c.Run()
+	cmd := cli.NewCommand("testcmd")
+	c.AddCommand(cmd)
+
+	err := cmd.Run()
 	if err != nil {
 		fmt.Println("ERROR:", err)
 		os.Exit(1)
