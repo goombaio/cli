@@ -27,7 +27,7 @@ import (
 // CLI is the main entry point of a CLI application
 type CLI struct {
 	Name     string
-	flags    *flag.FlagSet
+	Flags    *flag.FlagSet
 	args     []string
 	commands []*Command
 }
@@ -37,12 +37,12 @@ func NewCLI() *CLI {
 	cli := &CLI{
 		Name:     os.Args[0],
 		commands: make([]*Command, 0),
-		flags:    flag.NewFlagSet(os.Args[0], flag.ExitOnError),
+		Flags:    flag.NewFlagSet(os.Args[0], flag.ContinueOnError),
 		args:     make([]string, 0),
 	}
 
 	flag.Usage = cli.Usage
-	cli.flags.Usage = cli.Usage
+	cli.Flags.Usage = cli.Usage
 
 	flag.Parse()
 
@@ -68,21 +68,21 @@ func (c *CLI) Run() error {
 
 // SetOutput ...
 func (c *CLI) SetOutput(output io.Writer) {
-	c.flags.SetOutput(output)
+	c.Flags.SetOutput(output)
 }
 
 // Usage ...
 func (c *CLI) Usage() {
-	fmt.Fprintf(c.flags.Output(), "usage: %s [-version] [-help] <command> <args>\n", c.Name)
-	fmt.Fprintf(c.flags.Output(), "\n")
-	fmt.Fprintf(c.flags.Output(), "Flags:\n")
+	fmt.Fprintf(c.Flags.Output(), "usage: %s [-version] [-help] <command> <args>\n", c.Name)
+	fmt.Fprintf(c.Flags.Output(), "\n")
+	fmt.Fprintf(c.Flags.Output(), "Flags:\n")
 	// fmt.Fprintf(c.output, "  -version\tShow version information\n")
-	fmt.Fprintf(c.flags.Output(), "  -help\tShow help\n")
-	fmt.Fprintf(c.flags.Output(), "\n")
-	fmt.Fprintf(c.flags.Output(), "Use %s [command] -help for more information about a command\n", c.Name)
+	fmt.Fprintf(c.Flags.Output(), "  -h, -help\tShow help\n")
+	fmt.Fprintf(c.Flags.Output(), "\n")
+	fmt.Fprintf(c.Flags.Output(), "Use %s [command] -help for more information about a command\n", c.Name)
 }
 
 // ShowVersion ...
 func (c *CLI) ShowVersion(version string, build string) {
-	fmt.Fprintf(c.flags.Output(), "%s version %s build %s\n", c.Name, version, build)
+	fmt.Fprintf(c.Flags.Output(), "%s version %s build %s\n", c.Name, version, build)
 }

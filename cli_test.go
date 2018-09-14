@@ -85,7 +85,7 @@ func TestCLI_Run_noflags_noargs(t *testing.T) {
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Flags:\n")
 	// expected += fmt.Sprintf("  -version\tShow version information\n")
-	expected += fmt.Sprintf("  -help\tShow help\n")
+	expected += fmt.Sprintf("  -h, -help\tShow help\n")
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Use %s [command] -help for more information about a command\n", Name)
 	if buf.String() != expected {
@@ -128,7 +128,7 @@ func TestCLI_Usage(t *testing.T) {
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Flags:\n")
 	// expected += fmt.Sprintf("  -version\tShow version information\n")
-	expected += fmt.Sprintf("  -help\tShow help\n")
+	expected += fmt.Sprintf("  -h, -help\tShow help\n")
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Use %s [command] -help for more information about a command\n", Name)
 	if buf.String() != expected {

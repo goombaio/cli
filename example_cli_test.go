@@ -39,7 +39,7 @@ func ExampleCLI() {
 	// usage: cliprogram [-version] [-help] <command> <args>
 	//
 	// Flags:
-	//   -help	Show help
+	//   -h, -help	Show help
 	//
 	// Use cliprogram [command] -help for more information about a command
 }
