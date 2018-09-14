@@ -25,19 +25,17 @@ import (
 
 // Command ...
 type Command struct {
-	commands []*Command
 	flags    *flag.FlagSet
+	commands []*Command
+	Run      func() error
 }
 
 // NewCommand ...
 func NewCommand(name string) *Command {
 	cmd := &Command{
 		commands: make([]*Command, 0),
-		flags:    flag.NewFlagSet(name, flag.ExitOnError),
+		flags:    flag.NewFlagSet(name, flag.ContinueOnError),
 	}
-
-	cmd.flags.Usage = cmd.Usage
-	cmd.flags.Parse(cmd.flags.Args())
 
 	return cmd
 }
@@ -45,6 +43,11 @@ func NewCommand(name string) *Command {
 // Name ...
 func (c *Command) Name() string {
 	return c.flags.Name()
+}
+
+// Args ...
+func (c *Command) Args() []string {
+	return c.flags.Args()
 }
 
 // SetOutput ...
@@ -57,14 +60,17 @@ func (c *Command) AddSubCommand(cmd *Command) {
 	c.commands = append(c.commands, cmd)
 }
 
-// Run ...
-func (c *Command) Run() error {
-	if len(c.flags.Args()) == 0 {
-		c.Usage()
-		return nil
-	}
+// Execute ...
+func (c *Command) Execute() error {
+	flag.Usage = c.Usage
+	c.flags.Usage = flag.Usage
 
-	return nil
+	flag.Parse()
+	c.flags.Parse(flag.Args())
+
+	err := c.Run()
+
+	return err
 }
 
 // Usage ...
@@ -72,7 +78,6 @@ func (c *Command) Usage() {
 	fmt.Fprintf(c.flags.Output(), "usage: %s [-version] [-help] <command> <args>\n", c.flags.Name())
 	fmt.Fprintf(c.flags.Output(), "\n")
 	fmt.Fprintf(c.flags.Output(), "Flags:\n")
-	// fmt.Fprintf(c.output, "  -version\tShow version information\n")
 	fmt.Fprintf(c.flags.Output(), "  -h, -help\tShow help\n")
 	fmt.Fprintf(c.flags.Output(), "\n")
 	fmt.Fprintf(c.flags.Output(), "Use %s [command] -help for more information about a command\n", c.flags.Name())

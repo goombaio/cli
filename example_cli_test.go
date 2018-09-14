@@ -24,33 +24,52 @@ import (
 	"github.com/goombaio/cli"
 )
 
-func ExampleCLI() {
-	os.Args = []string{"cliprogram"}
+func ExampleCommand() {
+	programName := "programName"
+	os.Args = []string{programName}
 
-	c := cli.NewCLI()
-	c.SetOutput(os.Stdout)
+	rootCommand := cli.NewCommand(programName)
 
-	err := c.Run()
+	rootCommand.SetOutput(os.Stdout)
+
+	rootCommand.Run = func() error {
+		if len(rootCommand.Args()) == 0 {
+			rootCommand.Usage()
+		}
+		return nil
+	}
+
+	err := rootCommand.Execute()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 	// Output:
-	// usage: cliprogram [-version] [-help] <command> <args>
+	// usage: programName [-version] [-help] <command> <args>
 	//
 	// Flags:
 	//   -h, -help	Show help
 	//
-	// Use cliprogram [command] -help for more information about a command
+	// Use programName [command] -help for more information about a command
 }
 
-func ExampleCLI_arg() {
-	os.Args = []string{"cliprogram", "command"}
+func ExampleCommand_arg() {
+	programName := "programName"
 
-	c := cli.NewCLI()
-	c.SetOutput(os.Stdout)
+	os.Args = []string{programName, "command"}
 
-	err := c.Run()
+	rootCommand := cli.NewCommand(programName)
+
+	rootCommand.SetOutput(os.Stdout)
+
+	rootCommand.Run = func() error {
+		if len(rootCommand.Args()) == 0 {
+			rootCommand.Usage()
+		}
+		return nil
+	}
+
+	err := rootCommand.Execute()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

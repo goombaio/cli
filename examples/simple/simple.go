@@ -25,12 +25,16 @@ import (
 )
 
 func main() {
-	c := cli.NewCLI()
+	rootCommand := cli.NewCommand("simple")
+	rootCommand.Run = func() error {
+		if len(rootCommand.Args()) == 0 {
+			rootCommand.Usage()
+		}
 
-	cmd := cli.NewCommand("testcmd")
-	c.AddCommand(cmd)
+		return nil
+	}
 
-	err := cmd.Run()
+	err := rootCommand.Execute()
 	if err != nil {
 		fmt.Println("ERROR:", err)
 		os.Exit(1)

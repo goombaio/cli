@@ -25,9 +25,19 @@ import (
 )
 
 func main() {
-	c := cli.NewCLI()
+	rootCommand := cli.NewCommand("programName")
+	rootCommand.Run = func() error {
+		if len(rootCommand.Args()) == 0 {
+			rootCommand.Usage()
+		}
 
-	err := c.Run()
+		return nil
+	}
+
+	subCommand := cli.NewCommand("subCommandName")
+	rootCommand.AddSubCommand(subCommand)
+
+	err := rootCommand.Execute()
 	if err != nil {
 		fmt.Println("ERROR:", err)
 		os.Exit(1)
