@@ -37,6 +37,7 @@ func NewCommand(name string, shortDescription string) *Command {
 		commands:         make([]*Command, 0),
 		flags:            flag.NewFlagSet(name, flag.ContinueOnError),
 		ShortDescription: shortDescription,
+		Run:              func() error { return nil },
 	}
 
 	return cmd
@@ -50,6 +51,11 @@ func (c *Command) Name() string {
 // Args ...
 func (c *Command) Args() []string {
 	return c.flags.Args()
+}
+
+// Arg ...
+func (c *Command) Arg(id int) string {
+	return c.flags.Arg(id)
 }
 
 // SetOutput ...
