@@ -74,8 +74,9 @@ clean:			## Delete generated development environment
 	rm -rf coverage-all.out
 
 # Lint
+
 .PHONY: lint
-lint:
+lint:			## Lint source code
 	./lint.bash
 
 # Docs
