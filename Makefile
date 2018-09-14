@@ -73,6 +73,11 @@ clean:			## Delete generated development environment
 	rm -rf ${BINARY}-*-*.zip
 	rm -rf coverage-all.out
 
+# Lint
+.PHONY: lint
+lint:
+	./lint.bash
+
 # Docs
 
 godoc-serve:		## Serve documentation (godoc format) for this package at port HTTP 9090
