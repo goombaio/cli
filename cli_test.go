@@ -30,8 +30,8 @@ import (
 func TestCLI(t *testing.T) {
 	c := cli.NewCLI()
 
-	if c.ProgramName == "" {
-		t.Fatalf("Expected program name %s but got %s", "", c.ProgramName)
+	if c.Name == "" {
+		t.Fatalf("Expected program name %s but got %s", "", c.Name)
 	}
 }
 
@@ -48,16 +48,16 @@ func TestCLI_AddCommand(t *testing.T) {
 }
 
 func TestCLI_Run(t *testing.T) {
-	programName := "cliprogram"
+	Name := "cliprogram"
 
-	os.Args = []string{programName}
+	os.Args = []string{Name}
 
 	c := cli.NewCLI()
 
 	c.SetOutput(ioutil.Discard)
 
-	if c.ProgramName != programName {
-		t.Fatalf("Expected program name %s but got %s", programName, c.ProgramName)
+	if c.Name != Name {
+		t.Fatalf("Expected program name %s but got %s", Name, c.Name)
 	}
 
 	err := c.Run()
@@ -66,8 +66,56 @@ func TestCLI_Run(t *testing.T) {
 	}
 }
 
+func TestCLI_Run_noflags_noargs(t *testing.T) {
+	Name := "cliprogram"
+
+	os.Args = []string{Name}
+
+	c := cli.NewCLI()
+
+	buf := new(bytes.Buffer)
+	c.SetOutput(buf)
+
+	err := c.Run()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+
+	expected := fmt.Sprintf("usage: %s [-version] [-help] <command> <args>\n", Name)
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("Flags:\n")
+	// expected += fmt.Sprintf("  -version\tShow version information\n")
+	expected += fmt.Sprintf("  -help\tShow help\n")
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("Use %s [command] -help for more information about a command\n", Name)
+	if buf.String() != expected {
+		t.Fatalf("Expected %q but got %q", expected, buf.String())
+	}
+}
+
+func TestCLI_Run_noflags_args(t *testing.T) {
+	Name := "cliprogram"
+
+	os.Args = []string{Name, "command"}
+
+	c := cli.NewCLI()
+
+	buf := new(bytes.Buffer)
+	c.SetOutput(buf)
+
+	err := c.Run()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+
+	expected := fmt.Sprintf("")
+	if buf.String() != expected {
+		t.Fatalf("Expected %q but got %q", expected, buf.String())
+	}
+}
+
 func TestCLI_Usage(t *testing.T) {
-	programName := "cliprogram"
+	Name := "cliprogram"
 
 	c := cli.NewCLI()
 
@@ -76,20 +124,20 @@ func TestCLI_Usage(t *testing.T) {
 
 	c.Usage()
 
-	expected := fmt.Sprintf("usage: %s [-version] [-help] <command> <args>\n", programName)
+	expected := fmt.Sprintf("usage: %s [-version] [-help] <command> <args>\n", Name)
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Flags:\n")
-	expected += fmt.Sprintf("  -version\tShow version information\n")
+	// expected += fmt.Sprintf("  -version\tShow version information\n")
 	expected += fmt.Sprintf("  -help\tShow help\n")
 	expected += fmt.Sprintf("\n")
-	expected += fmt.Sprintf("Use %s [command] -help for more information about a command\n", programName)
+	expected += fmt.Sprintf("Use %s [command] -help for more information about a command\n", Name)
 	if buf.String() != expected {
 		t.Fatalf("Expected %q but got %q", expected, buf.String())
 	}
 }
 
 func TestCLI_ShowVersion(t *testing.T) {
-	programName := "cliprogram"
+	Name := "cliprogram"
 	version := "0.0.0"
 	buildid := "1234567890"
 
@@ -100,7 +148,7 @@ func TestCLI_ShowVersion(t *testing.T) {
 
 	c.ShowVersion(version, buildid)
 
-	expected := fmt.Sprintf("%s version %s build %s\n", programName, version, buildid)
+	expected := fmt.Sprintf("%s version %s build %s\n", Name, version, buildid)
 	if buf.String() != expected {
 		t.Fatalf("Expected %q but got %q", expected, buf.String())
 	}

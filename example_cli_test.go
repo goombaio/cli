@@ -15,43 +15,45 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package cli
+package cli_test
 
 import (
-	"flag"
-	"io"
+	"fmt"
+	"os"
+
+	"github.com/goombaio/cli"
 )
 
-// Command ...
-type Command struct {
-	Name     string
-	commands []*Command
-	flags    *flag.FlagSet
-}
+func ExampleCLI() {
+	os.Args = []string{"cliprogram"}
 
-// NewCommand ...
-func NewCommand(name string) *Command {
-	cmd := &Command{
-		Name:     name,
-		commands: make([]*Command, 0),
-		flags:    flag.NewFlagSet(name, flag.ExitOnError),
+	c := cli.NewCLI()
+	c.SetOutput(os.Stdout)
+
+	err := c.Run()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
-
-	return cmd
+	// Output:
+	// usage: cliprogram [-version] [-help] <command> <args>
+	//
+	// Flags:
+	//   -help	Show help
+	//
+	// Use cliprogram [command] -help for more information about a command
 }
 
-// SetOutput ...
-func (c *Command) SetOutput(output io.Writer) {
-	c.flags.SetOutput(output)
-}
+func ExampleCLI_arg() {
+	os.Args = []string{"cliprogram", "command"}
 
-// AddSubCommand ...
-func (c *Command) AddSubCommand(cmd *Command) {
-	c.commands = append(c.commands, cmd)
-}
+	c := cli.NewCLI()
+	c.SetOutput(os.Stdout)
 
-// Run ...
-func (c *Command) Run() error {
-
-	return nil
+	err := c.Run()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	// Output:
 }
