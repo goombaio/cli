@@ -79,7 +79,9 @@ func (c *Command) Usage() {
 	fmt.Fprintf(c.flags.Output(), "\n")
 	if len(c.commands) > 0 {
 		fmt.Fprintf(c.flags.Output(), "Commands:\n")
-
+		for _, command := range c.commands {
+			fmt.Fprintf(c.flags.Output(), "  %s\t%s short description\n", command.Name(), command.Name())
+		}
 		fmt.Fprintf(c.flags.Output(), "\n")
 	}
 	fmt.Fprintf(c.flags.Output(), "Flags:\n")
