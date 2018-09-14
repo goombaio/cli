@@ -34,14 +34,19 @@ type CLI struct {
 
 // NewCLI ...
 func NewCLI() *CLI {
-	flag.Parse()
-
 	cli := &CLI{
 		Name:     os.Args[0],
 		commands: make([]*Command, 0),
 		flags:    flag.NewFlagSet(os.Args[0], flag.ExitOnError),
-		args:     flag.Args(),
+		args:     make([]string, 0),
 	}
+
+	flag.Usage = cli.Usage
+	cli.flags.Usage = cli.Usage
+
+	flag.Parse()
+
+	cli.args = flag.Args()
 
 	return cli
 }
