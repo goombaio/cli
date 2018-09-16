@@ -56,9 +56,9 @@ func TestCommand_Args_noargs(t *testing.T) {
 	programName := "programName"
 	programShortDescription := "root Command Description"
 
-	os.Args = []string{programName}
-
 	rootCommand := cli.NewCommand(programName, programShortDescription)
+
+	os.Args = []string{programName}
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -76,9 +76,9 @@ func TestCommand_Args_args(t *testing.T) {
 	arg1 := "arg1"
 	arg2 := "arg2"
 
-	os.Args = []string{programName, arg1, arg2}
-
 	rootCommand := cli.NewCommand(programName, programShortDescription)
+
+	os.Args = []string{programName, arg1, arg2}
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -96,9 +96,9 @@ func TestCommand_Arg(t *testing.T) {
 	arg1 := "arg1"
 	arg2 := "arg2"
 
-	os.Args = []string{programName, arg1, arg2}
-
 	rootCommand := cli.NewCommand(programName, programShortDescription)
+
+	os.Args = []string{programName, arg1, arg2}
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -135,14 +135,14 @@ func TestCommand_SetOutput(t *testing.T) {
 	programName := "programName"
 	programShortDescription := "root Command Description"
 
-	os.Args = []string{programName}
-
 	rootCommand := cli.NewCommand(programName, programShortDescription)
 	rootCommand.Run = func() error {
 		rootCommand.Usage()
 
 		return nil
 	}
+
+	os.Args = []string{programName}
 
 	buf := new(bytes.Buffer)
 	rootCommand.SetOutput(buf)
@@ -174,13 +174,13 @@ func TestCommand_AddCommand(t *testing.T) {
 		return nil
 	}
 
-	buf := new(bytes.Buffer)
-	rootCommand.SetOutput(buf)
-
 	subCommandName := "subCommand"
 	subCommand := cli.NewCommand(subCommandName, "Sub Command Description")
 
 	rootCommand.AddCommand(subCommand)
+
+	buf := new(bytes.Buffer)
+	rootCommand.SetOutput(buf)
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -217,8 +217,6 @@ func TestCommand_Execute_noflags_noargs(t *testing.T) {
 	programName := "programName"
 	programShortDescription := "root Command Description"
 
-	os.Args = []string{programName}
-
 	rootCommand := cli.NewCommand(programName, programShortDescription)
 
 	buf := new(bytes.Buffer)
@@ -231,6 +229,8 @@ func TestCommand_Execute_noflags_noargs(t *testing.T) {
 
 		return nil
 	}
+
+	os.Args = []string{programName}
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -253,9 +253,9 @@ func TestCommand_Execute_noflags_args(t *testing.T) {
 	programShortDescription := "root Command Description"
 	arg1 := "command"
 
-	os.Args = []string{programName, arg1}
-
 	rootCommand := cli.NewCommand(programName, programShortDescription)
+
+	os.Args = []string{programName, arg1}
 
 	err := rootCommand.Execute()
 	if err != nil {
