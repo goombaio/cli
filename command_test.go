@@ -270,3 +270,42 @@ func TestCommand_Execute_noflags_args(t *testing.T) {
 		t.Fatalf("Expected command but got %s", rootCommand.Arg(0))
 	}
 }
+
+func TestCommand_Execute_subcommand(t *testing.T) {
+	programName := "programName"
+	programShortDescription := "root Command Description"
+
+	rootCommand := cli.NewCommand(programName, programShortDescription)
+
+	buf := new(bytes.Buffer)
+	rootCommand.SetOutput(buf)
+
+	rootCommand.Run = func() error {
+		rootCommand.Usage()
+
+		return nil
+	}
+
+	subCommandName := "subCommand"
+	subCommand := cli.NewCommand(subCommandName, "Sub Command Description")
+	subCommand.LongDescription = "subCommand (programName subCommand) is the long description about subCommand."
+
+	rootCommand.AddCommand(subCommand)
+
+	os.Args = []string{programName, "subCommand"}
+
+	err := rootCommand.Execute()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+
+	expected := fmt.Sprintf("%s (%s) is the long description about this command.\n", rootCommand.Name(), "fooo")
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("usage: %s [-help] <command> [args]\n", "fooo")
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("Flags:\n")
+	expected += fmt.Sprintf("  -h, -help\tShow help\n")
+	if buf.String() != expected {
+		t.Fatalf("Expected %q but got %q", expected, buf.String())
+	}
+}

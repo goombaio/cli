@@ -25,7 +25,10 @@ import (
 
 const (
 	// UsageTemplate ...
-	UsageTemplate = `usage: {{.ProgramName}} [-help] <command> [args]
+	UsageTemplate = `{{if .LongDescription}}
+{{.LongDescription}}
+
+{{end}}usage: {{.ProgramName}} [-help] <command> [args]
 {{if .Commands}}
 Commands:
 {{range .Commands}}  {{.Name}}	{{.Description}}{{end}}
@@ -40,6 +43,7 @@ Use {{.ProgramName}} [command] -help for more information about a command
 // Command ...
 type Command struct {
 	ShortDescription string
+	LongDescription  string
 
 	commands []*Command
 	flags    *flag.FlagSet
@@ -51,6 +55,7 @@ type Command struct {
 func NewCommand(name string, shortDescription string) *Command {
 	cmd := &Command{
 		ShortDescription: shortDescription,
+		LongDescription:  "",
 
 		commands: make([]*Command, 0),
 		flags:    flag.NewFlagSet(name, flag.ContinueOnError),
@@ -110,13 +115,15 @@ func (c *Command) Execute() error {
 // Usage ...
 func (c *Command) Usage() {
 	templateData := struct {
-		ProgramName string
-		Commands    []struct {
+		ProgramName     string
+		LongDescription string
+		Commands        []struct {
 			Name        string
 			Description string
 		}
 	}{
-		ProgramName: c.flags.Name(),
+		ProgramName:     c.flags.Name(),
+		LongDescription: c.LongDescription,
 	}
 	for _, command := range c.commands {
 		c := struct {
