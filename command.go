@@ -19,44 +19,50 @@ package cli
 
 import (
 	"flag"
-	"html/template"
 	"io"
+	"os"
+	"text/template"
 )
 
 const (
 	// UsageTemplate ...
-	UsageTemplate = `usage: {{.ProgramName}} [-help] <command> [args]
+	UsageTemplate = `usage: {{.CommandName}} [-help] <command> [args]{{if .LongDescription}}
+
+  {{.LongDescription}}.{{end}}
 {{if .Commands}}
 Commands:
-{{range .Commands}}  {{.Name}}	{{.Description}}{{end}}
-{{end}}
+{{range .Commands}}  {{.Name}}	{{.ShortDescription}}
+{{end}}{{end}}
 Flags:
-  -h, -help	Show help
+  -h, -help	Show help{{if .Commands}}
 
-Use {{.ProgramName}} [command] -help for more information about a command
+Use {{.CommandName}} [command] -help for more information about a command.{{end}}
 `
 )
 
 // Command ...
 type Command struct {
 	ShortDescription string
+	LongDescription  string
 
 	commands []*Command
 	flags    *flag.FlagSet
 
-	Run func() error
+	Run func(c *Command) error
 }
 
 // NewCommand ...
 func NewCommand(name string, shortDescription string) *Command {
 	cmd := &Command{
 		ShortDescription: shortDescription,
+		LongDescription:  "",
 
 		commands: make([]*Command, 0),
 		flags:    flag.NewFlagSet(name, flag.ContinueOnError),
 
-		Run: func() error { return nil },
+		Run: func(c *Command) error { return nil },
 	}
+	cmd.flags.SetOutput(os.Stderr)
 
 	return cmd
 }
@@ -93,41 +99,59 @@ func (c *Command) AddCommand(cmd *Command) {
 
 // Execute ...
 func (c *Command) Execute() error {
-	flag.Usage = c.Usage
-	c.flags.Usage = flag.Usage
+	// By default rootCommand (level 0)
+	cmd := c
+
+	// Find subCommand
+	if len(os.Args) > 1 {
+
+		// subCommand level 1
+		for _, subCommand := range c.commands {
+			if subCommand.Name() == os.Args[1] {
+				cmd = subCommand
+			}
+		}
+
+	}
 
 	flag.Parse()
-	err := c.flags.Parse(flag.Args())
+	flag.Usage = cmd.Usage
+
+	err := cmd.flags.Parse(flag.Args())
 	if err != nil {
 		return err
 	}
+	cmd.flags.Usage = cmd.Usage
 
-	err = c.Run()
+	err = cmd.Run(cmd)
 
 	return err
+
 }
 
 // Usage ...
 func (c *Command) Usage() {
 	templateData := struct {
-		ProgramName string
-		Commands    []struct {
-			Name        string
-			Description string
+		CommandName     string
+		LongDescription string
+		Commands        []struct {
+			Name             string
+			ShortDescription string
 		}
 	}{
-		ProgramName: c.flags.Name(),
+		CommandName:     c.flags.Name(),
+		LongDescription: c.LongDescription,
 	}
 	for _, command := range c.commands {
 		c := struct {
-			Name        string
-			Description string
+			Name             string
+			ShortDescription string
 		}{
 			command.Name(),
 			command.ShortDescription,
 		}
 		templateData.Commands = append(templateData.Commands, c)
 	}
-	t := template.Must(template.New("usage").Parse(UsageTemplate))
+	t := template.Must(template.New("usageTemplate").Parse(UsageTemplate))
 	_ = t.Execute(c.flags.Output(), templateData)
 }

@@ -26,18 +26,15 @@ import (
 
 func ExampleCommand() {
 	programName := "programName"
-	os.Args = []string{programName}
+	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
+	rootCommand.Run = func(c *cli.Command) error {
+		c.Usage()
 
-	rootCommand := cli.NewCommand(programName, "root Command")
-
-	rootCommand.SetOutput(os.Stdout)
-
-	rootCommand.Run = func() error {
-		if len(rootCommand.Args()) == 0 {
-			rootCommand.Usage()
-		}
 		return nil
 	}
+	rootCommand.SetOutput(os.Stdout)
+
+	os.Args = []string{programName}
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -49,25 +46,29 @@ func ExampleCommand() {
 	//
 	// Flags:
 	//   -h, -help	Show help
-	//
-	// Use programName [command] -help for more information about a command
 }
 
-func ExampleCommand_arg() {
+func ExampleCommand_subCommand() {
 	programName := "programName"
+	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
+	rootCommand.Run = func(c *cli.Command) error {
+		c.Usage()
 
-	os.Args = []string{programName, "command"}
-
-	rootCommand := cli.NewCommand(programName, "root Command")
-
-	rootCommand.SetOutput(os.Stdout)
-
-	rootCommand.Run = func() error {
-		if len(rootCommand.Args()) == 0 {
-			rootCommand.Usage()
-		}
 		return nil
 	}
+
+	subCommandName := "subCommand"
+	subCommand := cli.NewCommand(subCommandName, "subCommand Short Description")
+	subCommand.Run = func(c *cli.Command) error {
+		c.Usage()
+
+		return nil
+	}
+	subCommand.SetOutput(os.Stdout)
+
+	rootCommand.AddCommand(subCommand)
+
+	os.Args = []string{programName, "subCommand"}
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -75,4 +76,8 @@ func ExampleCommand_arg() {
 		os.Exit(1)
 	}
 	// Output:
+	// usage: subCommand [-help] <command> [args]
+	//
+	// Flags:
+	//   -h, -help	Show help
 }
