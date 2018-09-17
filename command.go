@@ -18,20 +18,13 @@
 package cli
 
 import (
-	"bytes"
 	"flag"
-	"fmt"
 	"io"
 	"os"
 	"text/template"
 )
 
 const (
-	// UnkownCommandTemplate ...
-	UnkownCommandTemplate = `unknown command {{.CommandName}} for {{.ParentCommandName}}
-Run '{{.ParentCommandName}} -help' for usage.
-`
-
 	// UsageTemplate ...
 	UsageTemplate = `usage: {{.CommandName}} [-help] <command> [args]{{if .LongDescription}}
 
@@ -119,23 +112,6 @@ func (c *Command) Execute() error {
 			}
 		}
 
-		// subCommand not found (level 1)
-		if cmd == nil {
-			buf := new(bytes.Buffer)
-
-			templateData := struct {
-				CommandName       string
-				ParentCommandName string
-			}{
-				CommandName:       os.Args[1],
-				ParentCommandName: os.Args[0],
-			}
-
-			t := template.Must(template.New("commandNotFoundTemplate").Parse(UsageTemplate))
-			_ = t.Execute(buf, templateData)
-
-			return fmt.Errorf(buf.String())
-		}
 	}
 
 	flag.Parse()
