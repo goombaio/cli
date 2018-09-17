@@ -19,7 +19,6 @@ package cli
 
 import (
 	"flag"
-	"fmt"
 	"io"
 	"os"
 	"text/template"
@@ -144,12 +143,11 @@ func (c *Command) Usage() {
 	}
 
 	for _, subCommand := range c.commands {
-		fmt.Printf("%#v", subCommand)
 		cc := struct {
 			Name             string
 			ShortDescription string
 		}{
-			"subCommand.Name()",
+			subCommand.Name(),
 			subCommand.ShortDescription,
 		}
 		templateData.Commands = append(templateData.Commands, cc)
