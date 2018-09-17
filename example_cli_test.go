@@ -59,11 +59,12 @@ func ExampleCommand_subCommand() {
 
 	subCommandName := "subCommand"
 	subCommand := cli.NewCommand(subCommandName, "subCommand Short Description")
-	rootCommand.Run = func(c *cli.Command) error {
+	subCommand.Run = func(c *cli.Command) error {
 		c.Usage()
 
 		return nil
 	}
+	subCommand.SetOutput(os.Stdout)
 
 	rootCommand.AddCommand(subCommand)
 
@@ -75,4 +76,8 @@ func ExampleCommand_subCommand() {
 		os.Exit(1)
 	}
 	// Output:
+	// usage: subCommand [-help] <command> [args]
+	//
+	// Flags:
+	//   -h, -help	Show help
 }
