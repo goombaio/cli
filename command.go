@@ -19,7 +19,6 @@ package cli
 
 import (
 	"flag"
-	"fmt"
 	"io"
 	"os"
 	"text/template"
@@ -103,8 +102,6 @@ func (c *Command) Execute() error {
 	// By default rootCommand (level 0)
 	cmd := c
 
-	fmt.Println(os.Args)
-
 	// Find subCommand
 	if len(os.Args) > 1 {
 
@@ -144,16 +141,18 @@ func (c *Command) Usage() {
 		CommandName:     c.flags.Name(),
 		LongDescription: c.LongDescription,
 	}
-	for _, command := range c.commands {
-		c := struct {
-			Name             string
-			ShortDescription string
-		}{
-			command.Name(),
-			command.ShortDescription,
+	/*
+		for _, command := range c.commands {
+			c := struct {
+				Name             string
+				ShortDescription string
+			}{
+				command.Name(),
+				command.ShortDescription,
+			}
+			templateData.Commands = append(templateData.Commands, c)
 		}
-		templateData.Commands = append(templateData.Commands, c)
-	}
+	*/
 	t := template.Must(template.New("usageTemplate").Parse(UsageTemplate))
 	_ = t.Execute(c.flags.Output(), templateData)
 }
