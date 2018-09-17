@@ -19,6 +19,7 @@ package cli
 
 import (
 	"flag"
+	"fmt"
 	"io"
 	"os"
 	"text/template"
@@ -99,34 +100,38 @@ func (c *Command) AddCommand(cmd *Command) {
 
 // Execute ...
 func (c *Command) Execute() error {
-	// By default rootCommand (level 0)
-	cmd := c
+	fmt.Println("fooo")
+	return nil
 
-	// Find subCommand
-	if len(os.Args) > 1 {
+	/*
+		// By default rootCommand (level 0)
+		cmd := c
 
-		// subCommand level 1
-		for _, subCommand := range c.commands {
-			if subCommand.Name() == os.Args[1] {
-				cmd = subCommand
+		// Find subCommand
+		if len(os.Args) > 1 {
+
+			// subCommand level 1
+			for _, subCommand := range c.commands {
+				if subCommand.Name() == os.Args[1] {
+					cmd = subCommand
+				}
 			}
+
 		}
 
-	}
+		flag.Parse()
+		flag.Usage = cmd.Usage
 
-	flag.Parse()
-	flag.Usage = cmd.Usage
+		err := cmd.flags.Parse(flag.Args())
+		if err != nil {
+			return err
+		}
+		cmd.flags.Usage = cmd.Usage
 
-	err := cmd.flags.Parse(flag.Args())
-	if err != nil {
+		err = cmd.Run(cmd)
+
 		return err
-	}
-	cmd.flags.Usage = cmd.Usage
-
-	err = cmd.Run(cmd)
-
-	return err
-
+	*/
 }
 
 // Usage ...
