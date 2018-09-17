@@ -143,14 +143,14 @@ func (c *Command) Usage() {
 	}
 
 	for _, subCommand := range c.commands {
-		cc := struct {
+		subc := struct {
 			Name             string
 			ShortDescription string
 		}{
 			subCommand.Name(),
 			subCommand.ShortDescription,
 		}
-		templateData.Commands = append(templateData.Commands, cc)
+		templateData.Commands = append(templateData.Commands, subc)
 	}
 
 	t := template.Must(template.New("usageTemplate").Parse(UsageTemplate))
