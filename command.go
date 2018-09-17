@@ -141,18 +141,18 @@ func (c *Command) Usage() {
 		CommandName:     c.flags.Name(),
 		LongDescription: c.LongDescription,
 	}
-	/*
-		for _, command := range c.commands {
-			c := struct {
-				Name             string
-				ShortDescription string
-			}{
-				command.Name(),
-				command.ShortDescription,
-			}
-			templateData.Commands = append(templateData.Commands, c)
+
+	for _, command := range c.commands {
+		cc := struct {
+			Name             string
+			ShortDescription string
+		}{
+			"nameeee",
+			command.ShortDescription,
 		}
-	*/
+		templateData.Commands = append(templateData.Commands, cc)
+	}
+
 	t := template.Must(template.New("usageTemplate").Parse(UsageTemplate))
 	_ = t.Execute(c.flags.Output(), templateData)
 }
