@@ -81,4 +81,4 @@ workflows:
     jobs:
       - build
       # - benchmarks
-      - lint
+      # - lint
