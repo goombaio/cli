@@ -19,6 +19,7 @@ package cli
 
 import (
 	"flag"
+	"fmt"
 	"io"
 	"os"
 	"text/template"
@@ -142,13 +143,14 @@ func (c *Command) Usage() {
 		LongDescription: c.LongDescription,
 	}
 
-	for _, command := range c.commands {
+	for _, subCommand := range c.commands {
+		fmt.Println(subCommand)
 		cc := struct {
 			Name             string
 			ShortDescription string
 		}{
-			"nameeee",
-			command.ShortDescription,
+			"command.Name()",
+			"command.ShortDescription",
 		}
 		templateData.Commands = append(templateData.Commands, cc)
 	}
