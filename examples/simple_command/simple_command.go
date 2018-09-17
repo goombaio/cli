@@ -25,21 +25,34 @@ import (
 )
 
 func main() {
-	rootCommand := cli.NewCommand("programName", "root Command")
-	rootCommand.Run = func() error {
-		if len(rootCommand.Args()) == 0 {
-			rootCommand.Usage()
-		}
+	rootCommand := cli.NewCommand("program", "rootCommand Short Description")
+	rootCommand.Run = func(c *cli.Command) error {
+		c.Usage()
 
 		return nil
 	}
 
-	subCommand := cli.NewCommand("subCommandName", "Sub Command Short Description")
-	rootCommand.AddCommand(subCommand)
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Short Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	subCommand1.Run = func(c *cli.Command) error {
+		c.Usage()
+
+		return nil
+	}
+	rootCommand.AddCommand(subCommand1)
+
+	subCommand2 := cli.NewCommand("subCommand2", "subCommand2 Short Description")
+	subCommand2.LongDescription = "subCommand2 Long Description"
+	subCommand2.Run = func(c *cli.Command) error {
+		c.Usage()
+
+		return nil
+	}
+	rootCommand.AddCommand(subCommand2)
 
 	err := rootCommand.Execute()
 	if err != nil {
 		fmt.Println("ERROR:", err)
-		os.Exit(1)
+		os.Exit(2)
 	}
 }
