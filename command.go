@@ -103,7 +103,7 @@ func (c *Command) Execute() error {
 	// By default rootCommand (level 0)
 	cmd := c
 
-	fmt.Println(cmd)
+	fmt.Println(os.Args)
 
 	// Find subCommand
 	if len(os.Args) > 1 {
