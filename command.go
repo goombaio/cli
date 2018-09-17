@@ -144,13 +144,13 @@ func (c *Command) Usage() {
 	}
 
 	for _, subCommand := range c.commands {
-		fmt.Println(subCommand)
+		fmt.Printf("%#v", subCommand)
 		cc := struct {
 			Name             string
 			ShortDescription string
 		}{
-			"command.Name()",
-			"command.ShortDescription",
+			"subCommand.Name()",
+			subCommand.ShortDescription,
 		}
 		templateData.Commands = append(templateData.Commands, cc)
 	}
