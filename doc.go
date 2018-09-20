@@ -15,4 +15,46 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+/*
+Package cli implements a commander providing a command-subcommand interface to
+create powerful modern CLI tools.
+
+In addition to providing an interface, cli also provides a controller to
+organize your application code.
+
+Example
+
+	package cli_test
+
+	import (
+		"fmt"
+		"os"
+
+		"github.com/goombaio/cli"
+	)
+
+	func ExampleCommand() {
+		programName := "programName"
+		rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
+		rootCommand.Run = func(c *cli.Command) error {
+			c.Usage()
+
+			return nil
+		}
+		rootCommand.SetOutput(os.Stdout)
+
+		os.Args = []string{programName}
+
+		err := rootCommand.Execute()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		// Output:
+		// usage: programName [-help] <command> [args]
+		//
+		// Flags:
+		//   -h, -help	Show help
+	}
+*/
 package cli

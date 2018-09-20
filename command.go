@@ -25,7 +25,8 @@ import (
 )
 
 const (
-	// UsageTemplate ...
+	// UsageTemplate is the template being used to render the Usage for
+	// any cli.Command that has a flag -h or-help attached to it.
 	UsageTemplate = `usage: {{.CommandName}} [-help] <command> [args]{{if .LongDescription}}
 
   {{.LongDescription}}.{{end}}
@@ -40,18 +41,35 @@ Use {{.CommandName}} [command] -help for more information about a command.{{end}
 `
 )
 
-// Command ...
+// Command type implements a command or subcommand.
+//
+// A command is just that, a command for your application.
+// E.g.  'go run ...' - 'run' is the command.
 type Command struct {
+	// ShortDescription is the message shown in the usage output when using the
+	// flag -h or --help.
 	ShortDescription string
-	LongDescription  string
 
+	// LongDescription is the long message shown when the flag -h or -help is ç
+	// used in combination with the command '<this-command> -h' or
+	// '<this-command> -help' output.
+	LongDescription string
+
+	// commands are the list of subcommands that a command have associated with
+	// it.
 	commands []*Command
-	flags    *flag.FlagSet
 
+	// commands are the list of flags that a command have associated with it.
+	flags *flag.FlagSet
+
+	// Run is the actual work that the command will do when it is invoked.
 	Run func(c *Command) error
 }
 
-// NewCommand ...
+// NewCommand creates a new Command.
+//
+// Cli requires you to define the name and description as part of your command
+// definition to ensure usability.
 func NewCommand(name string, shortDescription string) *Command {
 	cmd := &Command{
 		ShortDescription: shortDescription,
@@ -67,37 +85,47 @@ func NewCommand(name string, shortDescription string) *Command {
 	return cmd
 }
 
-// Name ...
+// Name returns the name of the command.
 func (c *Command) Name() string {
 	return c.flags.Name()
 }
 
-// Args ...
+// Args returns the list of arguments of this command.
+//
+// Arguments are represented as a list of strings.
 func (c *Command) Args() []string {
 	return c.flags.Args()
 }
 
-// Arg ...
+// Arg returns an string that represents an argument of this command given a
+// numerical index.
 func (c *Command) Arg(id int) string {
 	return c.flags.Arg(id)
 }
 
-// Output ...
+// Output retuns the destination for usage and error messages of this command.
+//
+// By default a Command uses os.Stderr as output.
 func (c *Command) Output() io.Writer {
 	return c.flags.Output()
 }
 
-// SetOutput ...
+// SetOutput sets the destination for usage and error messages.
+//
+// If output is nil, os.Stderr is used.
 func (c *Command) SetOutput(output io.Writer) {
 	c.flags.SetOutput(output)
 }
 
-// AddCommand ...
+// AddCommand adds a subCommand to this Command.
 func (c *Command) AddCommand(cmd *Command) {
 	c.commands = append(c.commands, cmd)
 }
 
-// Execute ...
+// Execute executes the command.
+//
+// Execute uses the args (os.Args[1:] by default) and run through the command
+// tree finding appropriate matches for commands and then corresponding flags.
 func (c *Command) Execute() error {
 	// By default rootCommand (level 0)
 	cmd := c
@@ -128,7 +156,10 @@ func (c *Command) Execute() error {
 	return err
 }
 
-// Usage ...
+// Usage puts out the usage for the command.
+//
+// It is used when a user provides invalid input or when the flag -h or -help
+// is attached in the input.
 func (c *Command) Usage() {
 	templateData := struct {
 		CommandName     string
