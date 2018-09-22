@@ -27,7 +27,8 @@ import (
 func ExampleCommand() {
 	programName := "programName"
 	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
-	rootCommand.Run = func(c *cli.Command) error {
+	rootCommand.LongDescription = "rootCommand Long Description"
+	rootCommand.Run = func(c *cli.Command, args []string) error {
 		c.Usage()
 
 		return nil
@@ -44,6 +45,8 @@ func ExampleCommand() {
 	// Output:
 	// usage: programName [-help] <command> [args]
 	//
+	//   rootCommand Long Description
+	//
 	// Flags:
 	//   -h, -help	Show help
 }
@@ -51,15 +54,18 @@ func ExampleCommand() {
 func ExampleCommand_subCommand() {
 	programName := "programName"
 	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
-	rootCommand.Run = func(c *cli.Command) error {
+	rootCommand.LongDescription = "rootCommand Long Description"
+	rootCommand.Run = func(c *cli.Command, args []string) error {
 		c.Usage()
 
 		return nil
 	}
+	rootCommand.SetOutput(os.Stdout)
 
 	subCommandName := "subCommand"
 	subCommand := cli.NewCommand(subCommandName, "subCommand Short Description")
-	subCommand.Run = func(c *cli.Command) error {
+	subCommand.LongDescription = "subCommand Long Description"
+	subCommand.Run = func(c *cli.Command, args []string) error {
 		c.Usage()
 
 		return nil
@@ -77,6 +83,8 @@ func ExampleCommand_subCommand() {
 	}
 	// Output:
 	// usage: subCommand [-help] <command> [args]
+	//
+	//   subCommand Long Description
 	//
 	// Flags:
 	//   -h, -help	Show help

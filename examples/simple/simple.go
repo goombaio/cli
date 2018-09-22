@@ -26,7 +26,8 @@ import (
 
 func main() {
 	rootCommand := cli.NewCommand("program", "root Command")
-	rootCommand.Run = func(c *cli.Command) error {
+	rootCommand.LongDescription = "Simple cli test with no subcommands"
+	rootCommand.Run = func(c *cli.Command, args []string) error {
 		c.Usage()
 
 		return nil
