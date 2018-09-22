@@ -141,7 +141,7 @@ func TestCommand_SetOutput(t *testing.T) {
 	programShortDescription := "root Command Description"
 
 	rootCommand := cli.NewCommand(programName, programShortDescription)
-	rootCommand.Run = func(c *cli.Command) error {
+	rootCommand.Run = func(c *cli.Command, args []string) error {
 		c.Usage()
 
 		return nil
@@ -170,7 +170,7 @@ func TestCommand_AddCommand(t *testing.T) {
 	programShortDescription := "root Command Description"
 
 	rootCommand := cli.NewCommand(programName, programShortDescription)
-	rootCommand.Run = func(c *cli.Command) error {
+	rootCommand.Run = func(c *cli.Command, args []string) error {
 		c.Usage()
 
 		return nil
@@ -222,7 +222,7 @@ func TestCommand_Execute_noflags_noargs(t *testing.T) {
 	programShortDescription := "root Command Description"
 
 	rootCommand := cli.NewCommand(programName, programShortDescription)
-	rootCommand.Run = func(c *cli.Command) error {
+	rootCommand.Run = func(c *cli.Command, args []string) error {
 		c.Usage()
 
 		return nil
@@ -278,7 +278,7 @@ func TestCommand_Execute_subcommand(t *testing.T) {
 	subCommandName := "subCommand"
 	subCommand := cli.NewCommand(subCommandName, "subCommand description")
 	subCommand.LongDescription = "subCommand is the long description about this command"
-	subCommand.Run = func(c *cli.Command) error {
+	subCommand.Run = func(c *cli.Command, args []string) error {
 		c.Usage()
 
 		return nil
@@ -297,7 +297,7 @@ func TestCommand_Execute_subcommand(t *testing.T) {
 
 	expected := fmt.Sprintf("usage: %s [-help] <command> [args]\n", subCommand.Name())
 	expected += fmt.Sprintf("\n")
-	expected += fmt.Sprintf("  %s is the long description about this command.\n", subCommand.Name())
+	expected += fmt.Sprintf("  %s is the long description about this command\n", subCommand.Name())
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Flags:\n")
 	expected += fmt.Sprintf("  -h, -help\tShow help\n")

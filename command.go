@@ -29,7 +29,7 @@ const (
 	// any cli.Command that has a flag -h or-help attached to it.
 	UsageTemplate = `usage: {{.CommandName}} [-help] <command> [args]{{if .LongDescription}}
 
-  {{.LongDescription}}.{{end}}
+  {{.LongDescription}}{{end}}
 {{if .Commands}}
 Commands:
 {{range .Commands}}  {{.Name}}	{{.ShortDescription}}
@@ -63,7 +63,7 @@ type Command struct {
 	flags *flag.FlagSet
 
 	// Run is the actual work that the command will do when it is invoked.
-	Run func(c *Command) error
+	Run func(c *Command, args []string) error
 }
 
 // NewCommand creates a new Command.
@@ -78,7 +78,7 @@ func NewCommand(name string, shortDescription string) *Command {
 		commands: make([]*Command, 0),
 		flags:    flag.NewFlagSet(name, flag.ContinueOnError),
 
-		Run: func(c *Command) error { return nil },
+		Run: func(c *Command, args []string) error { return nil },
 	}
 	cmd.flags.SetOutput(os.Stderr)
 
@@ -129,21 +129,22 @@ func (c *Command) AddCommand(cmd *Command) {
 func (c *Command) Execute() error {
 	// By default rootCommand (level 0)
 	cmd := c
+	flag.Usage = cmd.Usage
+
+	flag.Parse()
 
 	// Find subCommand
-	if len(os.Args) > 1 {
+	if len(flag.Args()) > 0 {
 
 		// subCommand level 1
 		for _, subCommand := range c.commands {
-			if subCommand.Name() == os.Args[1] {
+			if subCommand.Name() == flag.Arg(0) {
 				cmd = subCommand
+				flag.Usage = cmd.Usage
 			}
 		}
 
 	}
-
-	flag.Parse()
-	flag.Usage = cmd.Usage
 
 	err := cmd.flags.Parse(flag.Args())
 	if err != nil {
@@ -151,7 +152,7 @@ func (c *Command) Execute() error {
 	}
 	cmd.flags.Usage = cmd.Usage
 
-	err = cmd.Run(cmd)
+	err = cmd.Run(cmd, flag.Args())
 
 	return err
 }
