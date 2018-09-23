@@ -122,10 +122,25 @@ func (c *Command) Flags() []*Flag {
 	return c.flags
 }
 
-// Flag returns an string that represents an argument of this command given a
+// Flag returns a cli.Flag that represents a Flag of this command given a
 // numerical index.
 func (c *Command) Flag(id int) *Flag {
 	return c.flags[id]
+}
+
+// FlagName returns a cli.Flag that represents a Flag of this command given a
+// string name.
+func (c *Command) FlagName(name string) *Flag {
+	for _, flag := range c.Flags() {
+		if flag.ShortName == name {
+			return flag
+		}
+		if flag.LongName == name {
+			return flag
+		}
+	}
+
+	return nil
 }
 
 // Output retuns the destination for usage and error messages of this command.
