@@ -24,23 +24,32 @@ import (
 	"testing"
 
 	"github.com/goombaio/cli"
+	"github.com/goombaio/log"
 )
 
 func TestCommand_Usage(t *testing.T) {
-	programName := "programName"
-	programShortDescription := "rootCommand Description"
-	programLongDescription := "rootCommand Long Description"
-	rootCommand := cli.NewCommand(programName, programShortDescription)
-	rootCommand.LongDescription = programLongDescription
+	os.Args = []string{"programName"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
 	rootCommand.Run = func(c *cli.Command) error {
 		c.Usage()
 
 		return nil
 	}
+	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
+
 	buf := new(bytes.Buffer)
 	rootCommand.SetOutput(buf)
 
-	os.Args = []string{programName}
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	subCommand1.Run = func(c *cli.Command) error {
+		c.Usage()
+
+		return nil
+	}
+	rootCommand.AddCommand(subCommand1)
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -50,6 +59,11 @@ func TestCommand_Usage(t *testing.T) {
 	expected := fmt.Sprintf("usage: %s [-help] <command> [args]\n", rootCommand.Name)
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("  %s\n", rootCommand.LongDescription)
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("Commands:\n")
+	for _, command := range rootCommand.Commands() {
+		expected += fmt.Sprintf("  %s	%s\n", command.Name, command.ShortDescription)
+	}
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Flags:\n")
 	for _, flag := range rootCommand.Flags() {
