@@ -46,6 +46,34 @@ func ExampleCommand() {
 	// Run programName
 }
 
+func ExampleCommand_Usage() {
+	os.Args = []string{"programName", "-help"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Short Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+	rootCommand.Run = func(c *cli.Command) error {
+		fmt.Fprintf(c.Output(), "Run %s\n", c.Name)
+
+		return nil
+	}
+	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
+
+	err := rootCommand.Execute()
+	if err != nil {
+		rootCommand.Logger().Log("ERROR:", err)
+		os.Exit(1)
+	}
+	// Output:
+	// usage: programName [-help] <command> [args]
+	//
+	//   rootCommand Long Description
+	//
+	// Flags:
+	//   -h, -help	Show help message
+	//
+	// Use programName [command] -help for more information about a command.
+}
+
 func ExampleCommand_subCommand() {
 	os.Args = []string{"programName", "subCommand1"}
 
@@ -77,7 +105,7 @@ func ExampleCommand_subCommand() {
 }
 
 func ExampleCommand_subCommand_usage() {
-	os.Args = []string{"programName", "subCommand1"}
+	os.Args = []string{"programName", "subCommand1", "-help"}
 
 	rootCommand := cli.NewCommand("programName", "rootCommand Description")
 	rootCommand.LongDescription = "rootCommand Long Description"
@@ -91,7 +119,7 @@ func ExampleCommand_subCommand_usage() {
 	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
 	subCommand1.LongDescription = "subCommand1 Long Description"
 	subCommand1.Run = func(c *cli.Command) error {
-		c.Usage()
+		fmt.Printf("Running %s\n", c.Name)
 
 		return nil
 	}
