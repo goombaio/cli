@@ -151,21 +151,8 @@ func TestCommand_countCommands_countArguments_countFlags(t *testing.T) {
 		t.Fatalf("Expected 0 arguments but got %d", len(rootCommand.Arguments()))
 	}
 
-	if len(rootCommand.Flags()) != 0 {
-		t.Fatalf("Expected 0 sub-commands but got %d", len(rootCommand.Flags()))
-	}
-}
-
-func TestCommand_Output(t *testing.T) {
-	programName := "programName"
-	programShortDescription := "rootCommand Description"
-	programLongDescription := "rootCommand Long Description"
-	rootCommand := cli.NewCommand(programName, programShortDescription)
-	rootCommand.LongDescription = programLongDescription
-
-	output := rootCommand.Output()
-	if output != os.Stdout {
-		t.Fatalf("Expected ioutil.Discard but got %#v", output)
+	if len(rootCommand.Flags()) != 1 {
+		t.Fatalf("Expected 1 flags but got %d", len(rootCommand.Flags()))
 	}
 }
 

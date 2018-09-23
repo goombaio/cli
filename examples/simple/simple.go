@@ -22,6 +22,7 @@ import (
 	"os"
 
 	"github.com/goombaio/cli"
+	"github.com/goombaio/log"
 )
 
 func main() {
@@ -32,10 +33,12 @@ func main() {
 
 		return nil
 	}
+	loggerOutput := os.Stderr
+	rootCommand.SetLogger(log.NewFmtLogger(loggerOutput))
 
 	err := rootCommand.Execute()
 	if err != nil {
 		fmt.Println("ERROR:", err)
-		os.Exit(2)
+		os.Exit(1)
 	}
 }

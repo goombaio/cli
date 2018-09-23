@@ -22,4 +22,16 @@ type Flag struct {
 	ShortName   string
 	LongName    string
 	Description string
+	Value       string
+}
+
+// IsFlag checks if an string is a flag or not.
+//
+// It will be a flag if it has the format:
+// * -flag=value
+// * --flag
+// * -f=value
+// * -f
+func IsFlag(str string) bool {
+	return ((len(str) >= 3 && str[1] == '-') || (len(str) >= 2 && str[0] == '-' && str[1] != '-'))
 }
