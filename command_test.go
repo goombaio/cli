@@ -27,12 +27,10 @@ import (
 )
 
 func TestCommand(t *testing.T) {
-	programName := "programName"
-	programShortDescription := "rootCommand Description"
+	os.Args = []string{"programName"}
 
-	rootCommand := cli.NewCommand(programName, programShortDescription)
-
-	os.Args = []string{programName}
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -41,13 +39,10 @@ func TestCommand(t *testing.T) {
 }
 
 func TestCommand_Execute(t *testing.T) {
-	programName := "programName"
-	programShortDescription := "rootCommand Description"
-	programLongDescription := "rootCommand Long Description"
-	rootCommand := cli.NewCommand(programName, programShortDescription)
-	rootCommand.LongDescription = programLongDescription
+	os.Args = []string{"programName"}
 
-	os.Args = []string{programName}
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -56,17 +51,14 @@ func TestCommand_Execute(t *testing.T) {
 }
 
 func TestCommand_Name(t *testing.T) {
-	programName := "programName"
-	programShortDescription := "rootCommand Description"
-	programLongDescription := "rootCommand Long Description"
-	rootCommand := cli.NewCommand(programName, programShortDescription)
-	rootCommand.LongDescription = programLongDescription
+	os.Args = []string{"programName"}
 
-	if rootCommand.Name != programName {
-		t.Fatalf("Expected %q but got %q", programName, rootCommand.Name)
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	if rootCommand.Name != "programName" {
+		t.Fatalf("Expected %q but got %q", "programName", rootCommand.Name)
 	}
-
-	os.Args = []string{programName}
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -75,17 +67,14 @@ func TestCommand_Name(t *testing.T) {
 }
 
 func TestCommand_ShortDescription(t *testing.T) {
-	programName := "programName"
-	programShortDescription := "rootCommand Description"
-	programLongDescription := "rootCommand Long Description"
-	rootCommand := cli.NewCommand(programName, programShortDescription)
-	rootCommand.LongDescription = programLongDescription
+	os.Args = []string{"programName"}
 
-	if rootCommand.ShortDescription != programShortDescription {
-		t.Fatalf("Expected %q but got %q", rootCommand.ShortDescription, programShortDescription)
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	if rootCommand.ShortDescription != "rootCommand Description" {
+		t.Fatalf("Expected %q but got %q", "rootCommand Description", rootCommand.ShortDescription)
 	}
-
-	os.Args = []string{programName}
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -94,17 +83,14 @@ func TestCommand_ShortDescription(t *testing.T) {
 }
 
 func TestCommand_LongDescription(t *testing.T) {
-	programName := "programName"
-	programShortDescription := "rootCommand Description"
-	programLongDescription := "rootCommand Long Description"
-	rootCommand := cli.NewCommand(programName, programShortDescription)
-	rootCommand.LongDescription = programLongDescription
+	os.Args = []string{"programName"}
 
-	if rootCommand.LongDescription != programLongDescription {
-		t.Fatalf("Expected %q but got %q", rootCommand.LongDescription, programLongDescription)
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	if rootCommand.LongDescription != "rootCommand Long Description" {
+		t.Fatalf("Expected %q but got %q", "rootCommand Long Description", rootCommand.LongDescription)
 	}
-
-	os.Args = []string{programName}
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -113,15 +99,13 @@ func TestCommand_LongDescription(t *testing.T) {
 }
 
 func TestCommand_LongDescription_Unset(t *testing.T) {
-	programName := "programName"
-	programShortDescription := "rootCommand Description"
-	rootCommand := cli.NewCommand(programName, programShortDescription)
+	os.Args = []string{"programName"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
 
 	if rootCommand.LongDescription != "" {
-		t.Fatalf("Expected %q but got %q", rootCommand.LongDescription, "")
+		t.Fatalf("Expected %q but got %q", "", rootCommand.LongDescription)
 	}
-
-	os.Args = []string{programName}
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -130,13 +114,10 @@ func TestCommand_LongDescription_Unset(t *testing.T) {
 }
 
 func TestCommand_countCommands_countArguments_countFlags(t *testing.T) {
-	programName := "programName"
-	programShortDescription := "rootCommand Description"
-	programLongDescription := "rootCommand Long Description"
-	rootCommand := cli.NewCommand(programName, programShortDescription)
-	rootCommand.LongDescription = programLongDescription
+	os.Args = []string{"programName"}
 
-	os.Args = []string{programName}
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -156,12 +137,41 @@ func TestCommand_countCommands_countArguments_countFlags(t *testing.T) {
 	}
 }
 
+func TestCommand_Commands(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	rootCommand.AddCommand(subCommand1)
+
+	if len(rootCommand.Commands()) != 1 {
+		t.Fatalf("Expected 1 sub-commands but got %d", len(rootCommand.Commands()))
+	}
+}
+
+func TestCommand_Command(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	rootCommand.AddCommand(subCommand1)
+
+	if rootCommand.Command(0).Name != "subCommand1" {
+		t.Fatalf("Expected subCommand1 sub-commands but got %s", rootCommand.Command(0).Name)
+	}
+}
+
 func TestCommand_SetOutput(t *testing.T) {
-	programName := "programName"
-	programShortDescription := "rootCommand Description"
-	programLongDescription := "rootCommand Long Description"
-	rootCommand := cli.NewCommand(programName, programShortDescription)
-	rootCommand.LongDescription = programLongDescription
+	os.Args = []string{"programName"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
 	rootCommand.Run = func(c *cli.Command) error {
 		fmt.Fprintf(c.Output(), "Run %s\n", c.Name)
 
@@ -170,7 +180,35 @@ func TestCommand_SetOutput(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCommand.SetOutput(buf)
 
-	os.Args = []string{programName}
+	err := rootCommand.Execute()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+
+	expected := fmt.Sprintf("Run programName\n")
+	if buf.String() != expected {
+		t.Fatalf("Expected %q but got %q", expected, buf.String())
+	}
+}
+
+func TestCommand_Output(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+	rootCommand.Run = func(c *cli.Command) error {
+		fmt.Fprintf(c.Output(), "Run %s\n", c.Name)
+
+		return nil
+	}
+	buf := new(bytes.Buffer)
+	rootCommand.SetOutput(buf)
+
+	output := rootCommand.Output()
+
+	if output != buf {
+		t.Fatalf("Expected %#v but got %#v", buf, output)
+	}
 
 	err := rootCommand.Execute()
 	if err != nil {
