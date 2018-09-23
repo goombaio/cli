@@ -52,17 +52,22 @@ func (c *Command) ParseCommands(args []string) *Command {
 }
 
 // ParseFlags ...
-/*
-func (c *Command) ParseFlags(args []string) ([]string, error) {
-	var pflags []string
+func (c *Command) ParseFlags(args []string) *Command {
 	for _, arg := range args {
 		switch {
 		// A flag without a value, or with an `=` separated value
 		case IsFlag(arg):
-			pflags = append(pflags, arg)
+			for _, flag := range c.Flags() {
+				if flag.ShortName == arg {
+					flag.Parsed = true
+				}
+				if flag.LongName == arg {
+					flag.Parsed = true
+				}
+			}
 			continue
 		}
 	}
-	return pflags, nil
+
+	return c
 }
-*/

@@ -88,3 +88,17 @@ func TestCommand_ParseCommands_withFlags_withSubCommands(t *testing.T) {
 
 	_ = rootCommand.ParseCommands(os.Args)
 }
+
+func TestCommand_ParseFlags(t *testing.T) {
+	os.Args = []string{"programName", "-help"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	rootCommand.AddCommand(subCommand1)
+
+	cmd := rootCommand.ParseCommands(os.Args)
+	cmd = cmd.ParseFlags(os.Args)
+}

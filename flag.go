@@ -23,6 +23,7 @@ type Flag struct {
 	LongName    string
 	Description string
 	Value       string
+	Parsed      bool
 }
 
 // IsFlag checks if an string is a flag or not.

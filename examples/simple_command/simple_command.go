@@ -38,7 +38,7 @@ func main() {
 	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Short Description")
 	subCommand1.LongDescription = "subCommand1 Long Description"
 	subCommand1.Run = func(c *cli.Command) error {
-		c.Usage()
+		fmt.Printf("Running %s\n", c.Name)
 
 		return nil
 	}

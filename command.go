@@ -164,16 +164,17 @@ func (c *Command) AddCommand(cmd *Command) {
 func (c *Command) Execute() error {
 	cmd := c.ParseCommands(c.Arguments())
 
-	/*
-		pflags, err := c.parseFlags(c.Arguments())
-		// Run c.Usage() if -h or -help flags are present
-		for _, pflag := range pflags {
-			if pflag == "-h" || pflag == "-help" {
-				c.Usage()
+	cmd = cmd.ParseFlags(c.Arguments())
+
+	for _, flag := range cmd.Flags() {
+		if flag.ShortName == "-h" || flag.LongName == "-help" {
+			if flag.Parsed {
+				cmd.Usage()
 				return nil
 			}
 		}
-	*/
+	}
+
 	err := cmd.Run(cmd)
 
 	return err
