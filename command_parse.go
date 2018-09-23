@@ -55,6 +55,7 @@ func (c *Command) ParseCommands(args []string) *Command {
 }
 
 // ParseFlags ...
+/*
 func (c *Command) ParseFlags(args []string) ([]string, error) {
 	var pflags []string
 	for _, arg := range args {
@@ -67,3 +68,4 @@ func (c *Command) ParseFlags(args []string) ([]string, error) {
 	}
 	return pflags, nil
 }
+*/
