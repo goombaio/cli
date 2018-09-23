@@ -15,29 +15,23 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package main
+package cli
 
-import (
-	"fmt"
-	"os"
+// Flag implements a command line flag
+type Flag struct {
+	ShortName   string
+	LongName    string
+	Description string
+	Value       string
+}
 
-	"github.com/goombaio/cli"
-	"github.com/goombaio/log"
-)
-
-func main() {
-	rootCommand := cli.NewCommand("simple", "simple rootCommand")
-	rootCommand.LongDescription = "Simple cli test with no subcommands"
-	rootCommand.Run = func(c *cli.Command) error {
-		_, err := fmt.Fprintf(c.Output(), "Run %s\n", c.Name)
-
-		return err
-	}
-	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
-
-	err := rootCommand.Execute()
-	if err != nil {
-		rootCommand.Logger().Log("ERROR:", err)
-		os.Exit(1)
-	}
+// IsFlag checks if an string is a flag or not.
+//
+// It will be a flag if it has the format:
+// * -flag=value
+// * --flag
+// * -f=value
+// * -f
+func IsFlag(str string) bool {
+	return ((len(str) >= 3 && str[1] == '-') || (len(str) >= 2 && str[0] == '-' && str[1] != '-'))
 }

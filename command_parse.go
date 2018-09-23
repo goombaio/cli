@@ -15,29 +15,54 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package main
+package cli
 
-import (
-	"fmt"
-	"os"
+// ParseCommands ...
+func (c *Command) ParseCommands(args []string) *Command {
+	cmd := c
 
-	"github.com/goombaio/cli"
-	"github.com/goombaio/log"
-)
-
-func main() {
-	rootCommand := cli.NewCommand("simple", "simple rootCommand")
-	rootCommand.LongDescription = "Simple cli test with no subcommands"
-	rootCommand.Run = func(c *cli.Command) error {
-		_, err := fmt.Fprintf(c.Output(), "Run %s\n", c.Name)
-
-		return err
+	// Do not parse if there is no subcommands
+	if len(cmd.commands) == 0 {
+		return cmd
 	}
-	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
 
-	err := rootCommand.Execute()
-	if err != nil {
-		rootCommand.Logger().Log("ERROR:", err)
-		os.Exit(1)
+	candidate := ""
+	offsetArgs := 1
+
+	for _, arg := range args {
+		if !IsFlag(arg) {
+			candidate = arg
+		} else {
+			offsetArgs++
+		}
+
+		if candidate == "" {
+			continue
+		}
+
+		for _, command := range cmd.Commands() {
+			if command.Name == candidate {
+				command.arguments = cmd.arguments[offsetArgs:]
+				cmd = command
+			}
+		}
+
+		offsetArgs++
 	}
+
+	return cmd
+}
+
+// ParseFlags ...
+func (c *Command) ParseFlags(args []string) ([]string, error) {
+	var pflags []string
+	for _, arg := range args {
+		switch {
+		// A flag without a value, or with an `=` separated value
+		case IsFlag(arg):
+			pflags = append(pflags, arg)
+			continue
+		}
+	}
+	return pflags, nil
 }

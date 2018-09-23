@@ -15,29 +15,4 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package main
-
-import (
-	"fmt"
-	"os"
-
-	"github.com/goombaio/cli"
-	"github.com/goombaio/log"
-)
-
-func main() {
-	rootCommand := cli.NewCommand("simple", "simple rootCommand")
-	rootCommand.LongDescription = "Simple cli test with no subcommands"
-	rootCommand.Run = func(c *cli.Command) error {
-		_, err := fmt.Fprintf(c.Output(), "Run %s\n", c.Name)
-
-		return err
-	}
-	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
-
-	err := rootCommand.Execute()
-	if err != nil {
-		rootCommand.Logger().Log("ERROR:", err)
-		os.Exit(1)
-	}
-}
+package cli_test
