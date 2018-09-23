@@ -140,7 +140,7 @@ func (c *Command) SetOutput(output io.Writer) {
 	c.output = output
 }
 
-// Logger returns the current log.Logger for this Command
+// Logger returns the current log.Logger for this Command.
 func (c *Command) Logger() log.Logger {
 	return c.logger
 }
@@ -155,6 +155,11 @@ func (c *Command) AddCommand(cmd *Command) {
 	cmd.SetOutput(c.Output())
 	cmd.SetLogger(c.Logger())
 	c.commands = append(c.commands, cmd)
+}
+
+// AddFlag adds a flag to this Command.
+func (c *Command) AddFlag(flag *Flag) {
+	c.flags = append(c.flags, flag)
 }
 
 // Execute executes the command.
