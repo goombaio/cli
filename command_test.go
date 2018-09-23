@@ -205,6 +205,48 @@ func TestCommand_Argument(t *testing.T) {
 	}
 }
 
+func TestCommand_Flags(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	rootCommand.AddCommand(subCommand1)
+
+	if len(rootCommand.Flags()) != 1 {
+		t.Fatalf("Expected 1 flags but got %d", len(rootCommand.Flags()))
+	}
+}
+
+func TestCommand_Flag(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	rootCommand.AddCommand(subCommand1)
+
+	if rootCommand.Flag(0).ShortName != "-h" {
+		t.Fatalf("Expected -h but got %s", rootCommand.Flag(0).ShortName)
+	}
+
+	if rootCommand.Flag(0).LongName != "-help" {
+		t.Fatalf("Expected -help but got %s", rootCommand.Flag(0).LongName)
+	}
+
+	if rootCommand.Flag(0).Description != "Show help message" {
+		t.Fatalf("Expected Show help message but got %s", rootCommand.Flag(0).Description)
+	}
+
+	if rootCommand.Flag(0).Value != "false" {
+		t.Fatalf("Expected false but got %s", rootCommand.Flag(0).Value)
+	}
+}
+
 func TestCommand_SetOutput(t *testing.T) {
 	os.Args = []string{"programName"}
 

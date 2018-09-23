@@ -88,6 +88,7 @@ func NewCommand(name string, shortDescription string) *Command {
 		ShortName:   "-h",
 		LongName:    "-help",
 		Description: "Show help message",
+		Value:       "false",
 	}
 	cmd.flags = append(cmd.flags, helpFlag)
 
