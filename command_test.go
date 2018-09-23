@@ -29,9 +29,24 @@ import (
 
 func TestCommand(t *testing.T) {
 	programName := "programName"
-	programShortDescription := "root Command Description"
+	programShortDescription := "rootCommand Description"
 
 	rootCommand := cli.NewCommand(programName, programShortDescription)
+
+	os.Args = []string{programName}
+
+	err := rootCommand.Execute()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+}
+
+func TestCommand_Execute(t *testing.T) {
+	programName := "programName"
+	programShortDescription := "rootCommand Description"
+	programLongDescription := "rootCommand Long Description"
+	rootCommand := cli.NewCommand(programName, programShortDescription)
+	rootCommand.LongDescription = programLongDescription
 
 	os.Args = []string{programName}
 
@@ -43,10 +58,13 @@ func TestCommand(t *testing.T) {
 
 func TestCommand_Name(t *testing.T) {
 	programName := "programName"
-	rootCommand := cli.NewCommand(programName, "root Command Description")
+	programShortDescription := "rootCommand Description"
+	programLongDescription := "rootCommand Long Description"
+	rootCommand := cli.NewCommand(programName, programShortDescription)
+	rootCommand.LongDescription = programLongDescription
 
-	if rootCommand.Name() != programName {
-		t.Fatalf("Expected command name %s but got %s", programName, rootCommand.Name())
+	if rootCommand.Name != programName {
+		t.Fatalf("Expected %q but got %q", programName, rootCommand.Name)
 	}
 
 	os.Args = []string{programName}
@@ -57,12 +75,68 @@ func TestCommand_Name(t *testing.T) {
 	}
 }
 
-func TestCommand_Args_noargs(t *testing.T) {
+func TestCommand_ShortDescription(t *testing.T) {
 	programName := "programName"
-	programShortDescription := "root Command Description"
+	programShortDescription := "rootCommand Description"
+	programLongDescription := "rootCommand Long Description"
+	rootCommand := cli.NewCommand(programName, programShortDescription)
+	rootCommand.LongDescription = programLongDescription
 
+	if rootCommand.ShortDescription != programShortDescription {
+		t.Fatalf("Expected %q but got %q", rootCommand.ShortDescription, programShortDescription)
+	}
+
+	os.Args = []string{programName}
+
+	err := rootCommand.Execute()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+}
+
+func TestCommand_LongDescription(t *testing.T) {
+	programName := "programName"
+	programShortDescription := "rootCommand Description"
+	programLongDescription := "rootCommand Long Description"
+	rootCommand := cli.NewCommand(programName, programShortDescription)
+	rootCommand.LongDescription = programLongDescription
+
+	if rootCommand.LongDescription != programLongDescription {
+		t.Fatalf("Expected %q but got %q", rootCommand.LongDescription, programLongDescription)
+	}
+
+	os.Args = []string{programName}
+
+	err := rootCommand.Execute()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+}
+
+func TestCommand_LongDescription_Unset(t *testing.T) {
+	programName := "programName"
+	programShortDescription := "rootCommand Description"
 	rootCommand := cli.NewCommand(programName, programShortDescription)
 
+	if rootCommand.LongDescription != "" {
+		t.Fatalf("Expected %q but got %q", rootCommand.LongDescription, "")
+	}
+
+	os.Args = []string{programName}
+
+	err := rootCommand.Execute()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+}
+
+func TestCommand_countCommands_countArguments_countFlags(t *testing.T) {
+	programName := "programName"
+	programShortDescription := "rootCommand Description"
+	programLongDescription := "rootCommand Long Description"
+	rootCommand := cli.NewCommand(programName, programShortDescription)
+	rootCommand.LongDescription = programLongDescription
+
 	os.Args = []string{programName}
 
 	err := rootCommand.Execute()
@@ -70,11 +144,65 @@ func TestCommand_Args_noargs(t *testing.T) {
 		t.Fatalf("Expected no error but got %s", err)
 	}
 
-	if len(rootCommand.Args()) != 0 {
-		t.Fatalf("Expected 0 args but got %d", len(rootCommand.Args()))
+	if len(rootCommand.Commands()) != 0 {
+		t.Fatalf("Expected 0 sub-commands but got %d", len(rootCommand.Commands()))
+	}
+
+	if len(rootCommand.Arguments()) != 0 {
+		t.Fatalf("Expected 0 arguments but got %d", len(rootCommand.Arguments()))
+	}
+
+	if len(rootCommand.Flags()) != 0 {
+		t.Fatalf("Expected 0 sub-commands but got %d", len(rootCommand.Flags()))
 	}
 }
 
+func TestCommand_Output(t *testing.T) {
+	programName := "programName"
+	programShortDescription := "rootCommand Description"
+	programLongDescription := "rootCommand Long Description"
+	rootCommand := cli.NewCommand(programName, programShortDescription)
+	rootCommand.LongDescription = programLongDescription
+
+	output := rootCommand.Output()
+	if output != ioutil.Discard {
+		t.Fatalf("Expected ioutil.Discard but got %#v", output)
+	}
+}
+
+func TestCommand_SetOutput(t *testing.T) {
+	programName := "programName"
+	programShortDescription := "rootCommand Description"
+	programLongDescription := "rootCommand Long Description"
+	rootCommand := cli.NewCommand(programName, programShortDescription)
+	rootCommand.LongDescription = programLongDescription
+	rootCommand.Run = func(c *cli.Command) error {
+		c.Usage()
+
+		return nil
+	}
+	buf := new(bytes.Buffer)
+	rootCommand.SetOutput(buf)
+
+	os.Args = []string{programName}
+
+	err := rootCommand.Execute()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+
+	expected := fmt.Sprintf("usage: %s [-help] <command> [args]\n", rootCommand.Name)
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("  %s\n", rootCommand.LongDescription)
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("Use %s [command] -help for more information about a command.\n", rootCommand.Name)
+
+	if buf.String() != expected {
+		t.Fatalf("Expected %q but got %q", expected, buf.String())
+	}
+}
+
+/*
 func TestCommand_Args_args(t *testing.T) {
 	programName := "programName"
 	programShortDescription := "root Command Description"
@@ -120,48 +248,6 @@ func TestCommand_Arg(t *testing.T) {
 
 	if rootCommand.Arg(2) != "" {
 		t.Fatalf("Expected blank but got %s", rootCommand.Arg(2))
-	}
-}
-
-func TestCommand_Output(t *testing.T) {
-	programName := "programName"
-	programShortDescription := "root Command Description"
-
-	rootCommand := cli.NewCommand(programName, programShortDescription)
-	rootCommand.SetOutput(ioutil.Discard)
-
-	output := rootCommand.Output()
-	if output != ioutil.Discard {
-		t.Fatalf("Expected ioutil.Discard but got %#v", output)
-	}
-}
-
-func TestCommand_SetOutput(t *testing.T) {
-	programName := "programName"
-	programShortDescription := "root Command Description"
-
-	rootCommand := cli.NewCommand(programName, programShortDescription)
-	rootCommand.Run = func(c *cli.Command, args []string) error {
-		c.Usage()
-
-		return nil
-	}
-	buf := new(bytes.Buffer)
-	rootCommand.SetOutput(buf)
-
-	os.Args = []string{programName}
-
-	err := rootCommand.Execute()
-	if err != nil {
-		t.Fatalf("Expected no error but got %s", err)
-	}
-
-	expected := fmt.Sprintf("usage: %s [-help] <command> [args]\n", rootCommand.Name())
-	expected += fmt.Sprintf("\n")
-	expected += fmt.Sprintf("Flags:\n")
-	expected += fmt.Sprintf("  -h, -help\tShow help\n")
-	if buf.String() != expected {
-		t.Fatalf("Expected %q but got %q", expected, buf.String())
 	}
 }
 
@@ -305,3 +391,4 @@ func TestCommand_Execute_subcommand(t *testing.T) {
 		t.Fatalf("Expected %q but got %q", expected, buf.String())
 	}
 }
+*/

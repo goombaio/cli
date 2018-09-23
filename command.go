@@ -18,26 +18,25 @@
 package cli
 
 import (
-	"flag"
 	"io"
-	"os"
+	"io/ioutil"
 	"text/template"
 )
 
 const (
 	// UsageTemplate is the template being used to render the Usage for
 	// any cli.Command that has a flag -h or-help attached to it.
-	UsageTemplate = `usage: {{.CommandName}} [-help] <command> [args]{{if .LongDescription}}
+	UsageTemplate = `usage: {{.Name}} [-help] <command> [args]{{if .LongDescription}}
 
   {{.LongDescription}}{{end}}
 {{if .Commands}}
 Commands:
 {{range .Commands}}  {{.Name}}	{{.ShortDescription}}
-{{end}}{{end}}
+{{end}}{{end}}{{if .Flags}}
 Flags:
-  -h, -help	Show help{{if .Commands}}
-
-Use {{.CommandName}} [command] -help for more information about a command.{{end}}
+{{range .Flags}}  -{{.ShortName}}, -{{.LongName}}	{{.Description}}
+{{end}}{{end}}
+Use {{.Name}} [command] -help for more information about a command.
 `
 )
 
@@ -46,6 +45,9 @@ Use {{.CommandName}} [command] -help for more information about a command.{{end}
 // A command is just that, a command for your application.
 // E.g.  'go run ...' - 'run' is the command.
 type Command struct {
+	// Name is the unique name of the command
+	Name string
+
 	// ShortDescription is the message shown in the usage output when using the
 	// flag -h or --help.
 	ShortDescription string
@@ -59,11 +61,18 @@ type Command struct {
 	// it.
 	commands []*Command
 
-	// commands are the list of flags that a command have associated with it.
-	flags *flag.FlagSet
+	// arguments are the list of arguments that a command have associated with
+	// it.
+	arguments []string
+
+	// flags are the list of flags that a command have associated with it.
+	flags []*Flag
 
 	// Run is the actual work that the command will do when it is invoked.
-	Run func(c *Command, args []string) error
+	Run func(c *Command) error
+
+	// output is where (an io.Writer) the reults will be printed
+	output io.Writer
 }
 
 // NewCommand creates a new Command.
@@ -72,49 +81,67 @@ type Command struct {
 // definition to ensure usability.
 func NewCommand(name string, shortDescription string) *Command {
 	cmd := &Command{
+		Name:             name,
 		ShortDescription: shortDescription,
 		LongDescription:  "",
 
-		commands: make([]*Command, 0),
-		flags:    flag.NewFlagSet(name, flag.ContinueOnError),
+		commands:  make([]*Command, 0),
+		arguments: make([]string, 0),
+		flags:     make([]*Flag, 0),
 
-		Run: func(c *Command, args []string) error { return nil },
+		Run: func(c *Command) error { return nil },
+
+		output: ioutil.Discard,
 	}
-	cmd.flags.SetOutput(os.Stderr)
 
 	return cmd
 }
 
-// Name returns the name of the command.
-func (c *Command) Name() string {
-	return c.flags.Name()
+// Commands returns the list of sub-commands of this command.
+func (c *Command) Commands() []*Command {
+	return c.commands
 }
 
-// Args returns the list of arguments of this command.
-//
-// Arguments are represented as a list of strings.
-func (c *Command) Args() []string {
-	return c.flags.Args()
-}
-
-// Arg returns an string that represents an argument of this command given a
+// Command returns a *Command that represents an sub-command  of this command given a
 // numerical index.
-func (c *Command) Arg(id int) string {
-	return c.flags.Arg(id)
+func (c *Command) Command(id int) *Command {
+	return c.commands[id]
+}
+
+// Arguments returns the list of arguments of this command.
+func (c *Command) Arguments() []string {
+	return c.arguments
+}
+
+// Argument returns an string that represents an argument of this command given a
+// numerical index.
+func (c *Command) Argument(id int) string {
+	return c.arguments[id]
+}
+
+// Flags returns the list of flags of this command.
+func (c *Command) Flags() []*Flag {
+	return c.flags
+}
+
+// Flag returns an string that represents an argument of this command given a
+// numerical index.
+func (c *Command) Flag(id int) *Flag {
+	return c.flags[id]
 }
 
 // Output retuns the destination for usage and error messages of this command.
 //
 // By default a Command uses os.Stderr as output.
 func (c *Command) Output() io.Writer {
-	return c.flags.Output()
+	return c.output
 }
 
 // SetOutput sets the destination for usage and error messages.
 //
 // If output is nil, os.Stderr is used.
 func (c *Command) SetOutput(output io.Writer) {
-	c.flags.SetOutput(output)
+	c.output = output
 }
 
 // AddCommand adds a subCommand to this Command.
@@ -127,34 +154,36 @@ func (c *Command) AddCommand(cmd *Command) {
 // Execute uses the args (os.Args[1:] by default) and run through the command
 // tree finding appropriate matches for commands and then corresponding flags.
 func (c *Command) Execute() error {
-	// By default rootCommand (level 0)
-	cmd := c
-	flag.Usage = cmd.Usage
+	err := c.Run(c)
 
-	flag.Parse()
-
-	// Find subCommand
-	if len(flag.Args()) > 0 {
-
-		// subCommand level 1
-		for _, subCommand := range c.commands {
-			if subCommand.Name() == flag.Arg(0) {
-				cmd = subCommand
-				flag.Usage = cmd.Usage
+	return err
+	/*
+		// Find subCommand
+		if len(os.Args[1:]) > 0 {
+			for _, subCommand := range c.commands {
+				if subCommand.Name() == os.Args[1] {
+					cmd := subCommand
+					cmd.flags.Usage = cmd.Usage
+					err := cmd.flags.Parse(os.Args[1:])
+					if err != nil {
+						return err
+					}
+					err = cmd.Run(cmd, cmd.Args())
+					if err != nil {
+						return err
+					}
+				}
 			}
 		}
 
-	}
-
-	err := cmd.flags.Parse(flag.Args())
-	if err != nil {
-		return err
-	}
-	cmd.flags.Usage = cmd.Usage
-
-	err = cmd.Run(cmd, flag.Args())
-
-	return err
+		// No subCommand
+		flag.Usage = c.Usage
+		flag.Parse()
+		err := c.flags.Parse(os.Args[1:])
+		if err != nil {
+			return err
+		}
+	*/
 }
 
 // Usage puts out the usage for the command.
@@ -163,14 +192,19 @@ func (c *Command) Execute() error {
 // is attached in the input.
 func (c *Command) Usage() {
 	templateData := struct {
-		CommandName     string
+		Name            string
 		LongDescription string
 		Commands        []struct {
 			Name             string
 			ShortDescription string
 		}
+		Flags []struct {
+			ShortName   string
+			LongName    string
+			Description string
+		}
 	}{
-		CommandName:     c.flags.Name(),
+		Name:            c.Name,
 		LongDescription: c.LongDescription,
 	}
 
@@ -179,12 +213,25 @@ func (c *Command) Usage() {
 			Name             string
 			ShortDescription string
 		}{
-			subCommand.Name(),
+			subCommand.Name,
 			subCommand.ShortDescription,
 		}
 		templateData.Commands = append(templateData.Commands, subc)
 	}
 
+	for _, flag := range c.flags {
+		subf := struct {
+			ShortName   string
+			LongName    string
+			Description string
+		}{
+			flag.ShortName,
+			flag.LongName,
+			flag.Description,
+		}
+		templateData.Flags = append(templateData.Flags, subf)
+	}
+
 	t := template.Must(template.New("usageTemplate").Parse(UsageTemplate))
-	_ = t.Execute(c.flags.Output(), templateData)
+	_ = t.Execute(c.Output(), templateData)
 }

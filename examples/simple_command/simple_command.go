@@ -17,45 +17,38 @@
 
 package main
 
-import (
-	"fmt"
-	"os"
-
-	"github.com/goombaio/cli"
-)
-
 func main() {
-	rootCommand := cli.NewCommand("program", "rootCommand Short Description")
-	rootCommand.LongDescription = "rootCommand Long Description"
-	rootCommand.Run = func(c *cli.Command, args []string) error {
-		c.Usage()
-
-		return nil
-	}
-
-	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Short Description")
-	subCommand1.LongDescription = "subCommand1 Long Description"
-	subCommand1.Run = func(c *cli.Command, args []string) error {
-		c.Usage()
-
-		return nil
-	}
-	rootCommand.AddCommand(subCommand1)
-
 	/*
+		rootCommand := cli.NewCommand("program", "rootCommand Short Description")
+		rootCommand.LongDescription = "rootCommand Long Description"
+		rootCommand.Run = func(c *cli.Command, args []string) error {
+			fmt.Println("Execute rootCommand")
+
+			return nil
+		}
+
+		subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Short Description")
+		subCommand1.LongDescription = "subCommand1 Long Description"
+		subCommand1.Run = func(c *cli.Command, args []string) error {
+			fmt.Println("Execute subCommand1")
+
+			return nil
+		}
+		rootCommand.AddCommand(subCommand1)
+
 		subCommand2 := cli.NewCommand("subCommand2", "subCommand2 Short Description")
 		subCommand2.LongDescription = "subCommand2 Long Description"
-		subCommand2.Run = func(c *cli.Command) error {
-			c.Usage()
+		subCommand2.Run = func(c *cli.Command, args []string) error {
+			fmt.Println("Execute subCommand2")
 
 			return nil
 		}
 		rootCommand.AddCommand(subCommand2)
-	*/
 
-	err := rootCommand.Execute()
-	if err != nil {
-		fmt.Println("ERROR:", err)
-		os.Exit(2)
-	}
+		err := rootCommand.Execute()
+		if err != nil {
+			fmt.Println("ERROR:", err)
+			os.Exit(2)
+		}
+	*/
 }

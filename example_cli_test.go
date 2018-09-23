@@ -28,6 +28,29 @@ func ExampleCommand() {
 	programName := "programName"
 	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
 	rootCommand.LongDescription = "rootCommand Long Description"
+	rootCommand.Run = func(c *cli.Command) error {
+		fmt.Println("Executing rootCommand")
+
+		return nil
+	}
+	rootCommand.SetOutput(os.Stdout)
+
+	os.Args = []string{programName}
+
+	err := rootCommand.Execute()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	// Output:
+	// Executing rootCommand
+}
+
+/*
+func ExampleCommand_forceHelp() {
+	programName := "programName"
+	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
 	rootCommand.Run = func(c *cli.Command, args []string) error {
 		c.Usage()
 
@@ -35,7 +58,7 @@ func ExampleCommand() {
 	}
 	rootCommand.SetOutput(os.Stdout)
 
-	os.Args = []string{programName}
+	os.Args = []string{programName, "-help"}
 
 	err := rootCommand.Execute()
 	if err != nil {
@@ -52,6 +75,41 @@ func ExampleCommand() {
 }
 
 func ExampleCommand_subCommand() {
+	programName := "programName"
+	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+	rootCommand.Run = func(c *cli.Command, args []string) error {
+		fmt.Println("Execute rootCommand")
+
+		return nil
+	}
+	rootCommand.SetOutput(os.Stdout)
+
+	subCommandName := "subCommand"
+	subCommand := cli.NewCommand(subCommandName, "subCommand Short Description")
+	subCommand.LongDescription = "subCommand Long Description"
+	subCommand.Run = func(c *cli.Command, args []string) error {
+		fmt.Println("Execute subCommand")
+
+		return nil
+	}
+	subCommand.SetOutput(os.Stdout)
+
+	rootCommand.AddCommand(subCommand)
+
+	os.Args = []string{programName, "subCommand"}
+
+	err := rootCommand.Execute()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	// Output:
+	// Execute subCommand
+}
+
+
+func ExampleCommand_subCommand_forceHelp() {
 	programName := "programName"
 	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
 	rootCommand.LongDescription = "rootCommand Long Description"
@@ -89,3 +147,4 @@ func ExampleCommand_subCommand() {
 	// Flags:
 	//   -h, -help	Show help
 }
+*/

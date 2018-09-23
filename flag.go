@@ -15,27 +15,11 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package main
+package cli
 
-import (
-	"fmt"
-	"os"
-
-	"github.com/goombaio/cli"
-)
-
-func main() {
-	rootCommand := cli.NewCommand("program", "root Command")
-	rootCommand.LongDescription = "Simple cli test with no subcommands"
-	rootCommand.Run = func(c *cli.Command) error {
-		fmt.Printf("Execute %s", c.Name)
-
-		return nil
-	}
-
-	err := rootCommand.Execute()
-	if err != nil {
-		fmt.Println("ERROR:", err)
-		os.Exit(2)
-	}
+// Flag implements a command line flag
+type Flag struct {
+	ShortName   string
+	LongName    string
+	Description string
 }
