@@ -26,9 +26,8 @@ func (c *Command) ParseCommands(args []string) *Command {
 		return cmd
 	}
 
-	offsetArgs := 1
-
 	for _, arg := range args {
+		offsetArgs := 1
 		candidate := ""
 
 		if !IsFlag(arg) {
