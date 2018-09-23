@@ -29,7 +29,7 @@ func ExampleCommand() {
 	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
 	rootCommand.LongDescription = "rootCommand Long Description"
 	rootCommand.Run = func(c *cli.Command) error {
-		fmt.Println("Executing rootCommand")
+		fmt.Fprintf(c.Output(), "Executing rootCommand\n")
 
 		return nil
 	}

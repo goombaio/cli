@@ -177,7 +177,7 @@ func TestCommand_SetOutput(t *testing.T) {
 	rootCommand := cli.NewCommand(programName, programShortDescription)
 	rootCommand.LongDescription = programLongDescription
 	rootCommand.Run = func(c *cli.Command) error {
-		c.Usage()
+		fmt.Fprintf(c.Output(), "Run rootCommand\n")
 
 		return nil
 	}
@@ -191,12 +191,7 @@ func TestCommand_SetOutput(t *testing.T) {
 		t.Fatalf("Expected no error but got %s", err)
 	}
 
-	expected := fmt.Sprintf("usage: %s [-help] <command> [args]\n", rootCommand.Name)
-	expected += fmt.Sprintf("\n")
-	expected += fmt.Sprintf("  %s\n", rootCommand.LongDescription)
-	expected += fmt.Sprintf("\n")
-	expected += fmt.Sprintf("Use %s [command] -help for more information about a command.\n", rootCommand.Name)
-
+	expected := fmt.Sprintf("Run rootCommand\n")
 	if buf.String() != expected {
 		t.Fatalf("Expected %q but got %q", expected, buf.String())
 	}
