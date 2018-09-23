@@ -42,10 +42,45 @@ func TestCommand_Usage(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCommand.SetOutput(buf)
 
+	err := rootCommand.Execute()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+
+	expected := fmt.Sprintf("usage: %s [-help] <command> [args]\n", rootCommand.Name)
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("  %s\n", rootCommand.LongDescription)
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("Flags:\n")
+	for _, flag := range rootCommand.Flags() {
+		expected += fmt.Sprintf("  %s, %s	%s\n", flag.ShortName, flag.LongName, flag.Description)
+	}
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("Use %s [command] -help for more information about a command.\n", rootCommand.Name)
+	if buf.String() != expected {
+		t.Fatalf("Expected %q but got %q", expected, buf.String())
+	}
+}
+
+func TestCommand_Usage_withSubCommands(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+	rootCommand.Run = func(c *cli.Command) error {
+		c.Usage()
+
+		return nil
+	}
+	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
+
+	buf := new(bytes.Buffer)
+	rootCommand.SetOutput(buf)
+
 	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
 	subCommand1.LongDescription = "subCommand1 Long Description"
 	subCommand1.Run = func(c *cli.Command) error {
-		c.Usage()
+		fmt.Printf("Running %s\n", c.Name)
 
 		return nil
 	}
@@ -71,6 +106,50 @@ func TestCommand_Usage(t *testing.T) {
 	}
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Use %s [command] -help for more information about a command.\n", rootCommand.Name)
+	if buf.String() != expected {
+		t.Fatalf("Expected %q but got %q", expected, buf.String())
+	}
+}
+
+func TestCommand_Usage_subCommand(t *testing.T) {
+	os.Args = []string{"programName", "subCommand1"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+	rootCommand.Run = func(c *cli.Command) error {
+		fmt.Printf("Running %s\n", c.Name)
+
+		return nil
+	}
+	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
+
+	buf := new(bytes.Buffer)
+	rootCommand.SetOutput(buf)
+
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	subCommand1.Run = func(c *cli.Command) error {
+		c.Usage()
+
+		return nil
+	}
+	rootCommand.AddCommand(subCommand1)
+
+	err := rootCommand.Execute()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+
+	expected := fmt.Sprintf("usage: %s [-help] <command> [args]\n", subCommand1.Name)
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("  %s\n", subCommand1.LongDescription)
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("Flags:\n")
+	for _, flag := range subCommand1.Flags() {
+		expected += fmt.Sprintf("  %s, %s	%s\n", flag.ShortName, flag.LongName, flag.Description)
+	}
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("Use %s [command] -help for more information about a command.\n", subCommand1.Name)
 	if buf.String() != expected {
 		t.Fatalf("Expected %q but got %q", expected, buf.String())
 	}
