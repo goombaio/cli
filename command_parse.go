@@ -46,8 +46,6 @@ func (c *Command) ParseCommands(args []string) *Command {
 				cmd = command
 			}
 		}
-
-		offsetArgs++
 	}
 
 	return cmd
