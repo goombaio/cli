@@ -29,16 +29,15 @@ func main() {
 	rootCommand := cli.NewCommand("simple", "simple rootCommand")
 	rootCommand.LongDescription = "Simple cli test with no subcommands"
 	rootCommand.Run = func(c *cli.Command) error {
-		fmt.Fprintf(c.Output(), "Run %s\n", c.Name)
+		_, err := fmt.Fprintf(c.Output(), "Run %s\n", c.Name)
 
-		return nil
+		return err
 	}
-	loggerOutput := os.Stderr
-	rootCommand.SetLogger(log.NewFmtLogger(loggerOutput))
+	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
 
 	err := rootCommand.Execute()
 	if err != nil {
-		fmt.Println("ERROR:", err)
+		rootCommand.Logger().Log("ERROR:", err)
 		os.Exit(1)
 	}
 }
