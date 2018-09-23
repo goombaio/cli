@@ -25,10 +25,10 @@ import (
 )
 
 func main() {
-	rootCommand := cli.NewCommand("program", "root Command")
+	rootCommand := cli.NewCommand("simple", "simple rootCommand")
 	rootCommand.LongDescription = "Simple cli test with no subcommands"
 	rootCommand.Run = func(c *cli.Command) error {
-		fmt.Printf("Execute %s", c.Name)
+		fmt.Fprintf(c.Output(), "Run %s\n", c.Name)
 
 		return nil
 	}

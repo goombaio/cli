@@ -19,7 +19,7 @@ package cli
 
 import (
 	"io"
-	"io/ioutil"
+	"os"
 	"text/template"
 )
 
@@ -91,7 +91,7 @@ func NewCommand(name string, shortDescription string) *Command {
 
 		Run: func(c *Command) error { return nil },
 
-		output: ioutil.Discard,
+		output: os.Stdout,
 	}
 
 	return cmd
@@ -149,41 +149,52 @@ func (c *Command) AddCommand(cmd *Command) {
 	c.commands = append(c.commands, cmd)
 }
 
+// parseCommands parses a list of string arguments and builds a list of
+// Commands from it.
+func (c *Command) parseCommands(args []string) (commands []*Command, err error) {
+	return commands, nil
+}
+
+// parseArguments parses a list of string arguments and builds a list of
+// Arguments from it.
+func (c *Command) parseArguments(args []string) (arguments []string, err error) {
+	return arguments, nil
+}
+
+// parseArguments parses a list of string arguments and builds a list of
+// Arguments from it.
+func (c *Command) parseFlags(args []string) (flags []*Flag, err error) {
+	return flags, nil
+}
+
 // Execute executes the command.
 //
 // Execute uses the args (os.Args[1:] by default) and run through the command
 // tree finding appropriate matches for commands and then corresponding flags.
 func (c *Command) Execute() error {
-	err := c.Run(c)
+	osArgs := os.Args[1:]
+
+	commands, err := c.parseCommands(osArgs)
+	if err != nil {
+		return err
+	}
+	c.commands = commands
+
+	arguments, err := c.parseArguments(osArgs)
+	if err != nil {
+		return err
+	}
+	c.arguments = arguments
+
+	flags, err := c.parseFlags(osArgs)
+	if err != nil {
+		return err
+	}
+	c.flags = flags
+
+	err = c.Run(c)
 
 	return err
-	/*
-		// Find subCommand
-		if len(os.Args[1:]) > 0 {
-			for _, subCommand := range c.commands {
-				if subCommand.Name() == os.Args[1] {
-					cmd := subCommand
-					cmd.flags.Usage = cmd.Usage
-					err := cmd.flags.Parse(os.Args[1:])
-					if err != nil {
-						return err
-					}
-					err = cmd.Run(cmd, cmd.Args())
-					if err != nil {
-						return err
-					}
-				}
-			}
-		}
-
-		// No subCommand
-		flag.Usage = c.Usage
-		flag.Parse()
-		err := c.flags.Parse(os.Args[1:])
-		if err != nil {
-			return err
-		}
-	*/
 }
 
 // Usage puts out the usage for the command.
@@ -233,5 +244,5 @@ func (c *Command) Usage() {
 	}
 
 	t := template.Must(template.New("usageTemplate").Parse(UsageTemplate))
-	_ = t.Execute(c.Output(), templateData)
+	_ = t.Execute(os.Stderr, templateData)
 }

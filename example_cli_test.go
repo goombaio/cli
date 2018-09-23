@@ -29,7 +29,7 @@ func ExampleCommand() {
 	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
 	rootCommand.LongDescription = "rootCommand Long Description"
 	rootCommand.Run = func(c *cli.Command) error {
-		fmt.Fprintf(c.Output(), "Executing rootCommand\n")
+		fmt.Fprintf(c.Output(), "Run %s\n", c.Name)
 
 		return nil
 	}
@@ -43,108 +43,5 @@ func ExampleCommand() {
 		os.Exit(1)
 	}
 	// Output:
-	// Executing rootCommand
+	// Run programName
 }
-
-/*
-func ExampleCommand_forceHelp() {
-	programName := "programName"
-	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
-	rootCommand.LongDescription = "rootCommand Long Description"
-	rootCommand.Run = func(c *cli.Command, args []string) error {
-		c.Usage()
-
-		return nil
-	}
-	rootCommand.SetOutput(os.Stdout)
-
-	os.Args = []string{programName, "-help"}
-
-	err := rootCommand.Execute()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	// Output:
-	// usage: programName [-help] <command> [args]
-	//
-	//   rootCommand Long Description
-	//
-	// Flags:
-	//   -h, -help	Show help
-}
-
-func ExampleCommand_subCommand() {
-	programName := "programName"
-	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
-	rootCommand.LongDescription = "rootCommand Long Description"
-	rootCommand.Run = func(c *cli.Command, args []string) error {
-		fmt.Println("Execute rootCommand")
-
-		return nil
-	}
-	rootCommand.SetOutput(os.Stdout)
-
-	subCommandName := "subCommand"
-	subCommand := cli.NewCommand(subCommandName, "subCommand Short Description")
-	subCommand.LongDescription = "subCommand Long Description"
-	subCommand.Run = func(c *cli.Command, args []string) error {
-		fmt.Println("Execute subCommand")
-
-		return nil
-	}
-	subCommand.SetOutput(os.Stdout)
-
-	rootCommand.AddCommand(subCommand)
-
-	os.Args = []string{programName, "subCommand"}
-
-	err := rootCommand.Execute()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	// Output:
-	// Execute subCommand
-}
-
-
-func ExampleCommand_subCommand_forceHelp() {
-	programName := "programName"
-	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
-	rootCommand.LongDescription = "rootCommand Long Description"
-	rootCommand.Run = func(c *cli.Command, args []string) error {
-		c.Usage()
-
-		return nil
-	}
-	rootCommand.SetOutput(os.Stdout)
-
-	subCommandName := "subCommand"
-	subCommand := cli.NewCommand(subCommandName, "subCommand Short Description")
-	subCommand.LongDescription = "subCommand Long Description"
-	subCommand.Run = func(c *cli.Command, args []string) error {
-		c.Usage()
-
-		return nil
-	}
-	subCommand.SetOutput(os.Stdout)
-
-	rootCommand.AddCommand(subCommand)
-
-	os.Args = []string{programName, "subCommand"}
-
-	err := rootCommand.Execute()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	// Output:
-	// usage: subCommand [-help] <command> [args]
-	//
-	//   subCommand Long Description
-	//
-	// Flags:
-	//   -h, -help	Show help
-}
-*/
