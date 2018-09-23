@@ -22,7 +22,7 @@ func (c *Command) ParseCommands(args []string) *Command {
 	cmd := c
 
 	// Do not parse if there is no subcommands
-	if len(cmd.Commands()) == 0 {
+	if len(cmd.commands) == 0 {
 		return cmd
 	}
 
@@ -43,8 +43,6 @@ func (c *Command) ParseCommands(args []string) *Command {
 		for _, command := range cmd.Commands() {
 			if command.Name == candidate {
 				command.arguments = cmd.arguments[offsetArgs:]
-				command.SetOutput(cmd.Output())
-				command.SetLogger(cmd.Logger())
 				cmd = command
 			}
 		}

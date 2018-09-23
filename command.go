@@ -162,6 +162,7 @@ func (c *Command) AddCommand(cmd *Command) {
 // appropriate matches for commands and then corresponding flags.
 func (c *Command) Execute() error {
 	cmd := c.ParseCommands(c.Arguments())
+
 	/*
 		pflags, err := c.parseFlags(c.Arguments())
 		// Run c.Usage() if -h or -help flags are present
@@ -172,7 +173,7 @@ func (c *Command) Execute() error {
 			}
 		}
 	*/
-	err := cmd.Run(c)
+	err := cmd.Run(cmd)
 
 	return err
 }

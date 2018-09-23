@@ -22,26 +22,56 @@ import (
 	"os"
 
 	"github.com/goombaio/cli"
+	"github.com/goombaio/log"
 )
 
 func ExampleCommand() {
-	programName := "programName"
-	rootCommand := cli.NewCommand(programName, "rootCommand Short Description")
+	os.Args = []string{"programName"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Short Description")
 	rootCommand.LongDescription = "rootCommand Long Description"
 	rootCommand.Run = func(c *cli.Command) error {
 		fmt.Fprintf(c.Output(), "Run %s\n", c.Name)
 
 		return nil
 	}
-	rootCommand.SetOutput(os.Stdout)
-
-	os.Args = []string{programName}
+	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
 
 	err := rootCommand.Execute()
 	if err != nil {
-		fmt.Println(err)
+		rootCommand.Logger().Log("ERROR:", err)
 		os.Exit(1)
 	}
 	// Output:
 	// Run programName
+}
+
+func ExampleCommand_subCommand() {
+	os.Args = []string{"programName", "subCommand1"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+	rootCommand.Run = func(c *cli.Command) error {
+		fmt.Printf("Running %s\n", c.Name)
+
+		return nil
+	}
+	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
+
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	subCommand1.Run = func(c *cli.Command) error {
+		fmt.Printf("Running %s\n", c.Name)
+
+		return nil
+	}
+	rootCommand.AddCommand(subCommand1)
+
+	err := rootCommand.Execute()
+	if err != nil {
+		rootCommand.Logger().Log("ERROR:", err)
+		os.Exit(1)
+	}
+	// Output:
+	// Running subCommand1
 }

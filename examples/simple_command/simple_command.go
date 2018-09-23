@@ -29,17 +29,16 @@ func main() {
 	rootCommand := cli.NewCommand("program", "rootCommand Short Description")
 	rootCommand.LongDescription = "rootCommand Long Description"
 	rootCommand.Run = func(c *cli.Command) error {
-		fmt.Println("Execute rootCommand")
+		fmt.Printf("Running %s\n", c.Name)
 
 		return nil
 	}
-	loggerOutput := os.Stderr
-	rootCommand.SetLogger(log.NewFmtLogger(loggerOutput))
+	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
 
 	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Short Description")
 	subCommand1.LongDescription = "subCommand1 Long Description"
 	subCommand1.Run = func(c *cli.Command) error {
-		fmt.Println("Execute subCommand1")
+		c.Usage()
 
 		return nil
 	}
@@ -48,7 +47,7 @@ func main() {
 	subCommand2 := cli.NewCommand("subCommand2", "subCommand2 Short Description")
 	subCommand2.LongDescription = "subCommand2 Long Description"
 	subCommand2.Run = func(c *cli.Command) error {
-		fmt.Println("Execute subCommand2")
+		fmt.Printf("Running %s\n", c.Name)
 
 		return nil
 	}
@@ -56,7 +55,7 @@ func main() {
 
 	err := rootCommand.Execute()
 	if err != nil {
-		fmt.Println("ERROR:", err)
+		rootCommand.Logger().Log("ERROR:", err)
 		os.Exit(1)
 	}
 }
