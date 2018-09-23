@@ -18,7 +18,6 @@
 package cli
 
 import (
-	"os"
 	"text/template"
 )
 
@@ -86,5 +85,5 @@ func (c *Command) Usage() {
 	}
 
 	t := template.Must(template.New("usageTemplate").Parse(UsageTemplate))
-	_ = t.Execute(os.Stderr, templateData)
+	_ = t.Execute(c.Output(), templateData)
 }
