@@ -163,7 +163,15 @@ func TestCommand_Command(t *testing.T) {
 	rootCommand.AddCommand(subCommand1)
 
 	if rootCommand.Command(0).Name != "subCommand1" {
-		t.Fatalf("Expected subCommand1 sub-commands but got %s", rootCommand.Command(0).Name)
+		t.Fatalf("Expected subCommand1 but got %s", rootCommand.Command(0).Name)
+	}
+
+	if rootCommand.Command(0).ShortDescription != "subCommand1 Description" {
+		t.Fatalf("Expected subCommand1 Description but got %s", rootCommand.Command(0).ShortDescription)
+	}
+
+	if rootCommand.Command(0).LongDescription != "subCommand1 Long Description" {
+		t.Fatalf("Expected subCommand1 Long Description but got %s", rootCommand.Command(0).LongDescription)
 	}
 }
 
