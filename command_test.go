@@ -175,6 +175,36 @@ func TestCommand_Command(t *testing.T) {
 	}
 }
 
+func TestCommand_Arguments(t *testing.T) {
+	os.Args = []string{"programName", "argument1"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	rootCommand.AddCommand(subCommand1)
+
+	if len(rootCommand.Arguments()) != 1 {
+		t.Fatalf("Expected 1 arguments but got %d", len(rootCommand.Arguments()))
+	}
+}
+
+func TestCommand_Argument(t *testing.T) {
+	os.Args = []string{"programName", "argument1"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	rootCommand.AddCommand(subCommand1)
+
+	if rootCommand.Argument(0) != "argument1" {
+		t.Fatalf("Expected argument1 arguments but got %d", len(rootCommand.Argument(0)))
+	}
+}
+
 func TestCommand_SetOutput(t *testing.T) {
 	os.Args = []string{"programName"}
 
