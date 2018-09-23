@@ -16,3 +16,49 @@
 // under the License.
 
 package cli_test
+
+import (
+	"os"
+	"testing"
+
+	"github.com/goombaio/cli"
+)
+
+func TestCommand_ParseCommands(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	rootCommand.AddCommand(subCommand1)
+
+	_ = rootCommand.ParseCommands(os.Args)
+}
+
+func TestCommand_ParseCommands_withArguments(t *testing.T) {
+	os.Args = []string{"programName", "argument1"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	rootCommand.AddCommand(subCommand1)
+
+	_ = rootCommand.ParseCommands(os.Args)
+}
+
+func TestCommand_ParseCommands_withSubCommands(t *testing.T) {
+	os.Args = []string{"programName", "argument1", "subCommand1", "argument2"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
+	subCommand1.LongDescription = "subCommand1 Long Description"
+	rootCommand.AddCommand(subCommand1)
+
+	_ = rootCommand.ParseCommands(os.Args)
+}
