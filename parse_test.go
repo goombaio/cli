@@ -100,7 +100,7 @@ func TestCommand_ParseFlags_shortFlag(t *testing.T) {
 	rootCommand.AddCommand(subCommand1)
 
 	cmd := rootCommand.ParseCommands(os.Args)
-	cmd = cmd.ParseFlags(os.Args)
+	_ = cmd.ParseFlags(os.Args)
 }
 
 func TestCommand_ParseFlags_longFlag(t *testing.T) {
@@ -114,5 +114,5 @@ func TestCommand_ParseFlags_longFlag(t *testing.T) {
 	rootCommand.AddCommand(subCommand1)
 
 	cmd := rootCommand.ParseCommands(os.Args)
-	cmd = cmd.ParseFlags(os.Args)
+	_ = cmd.ParseFlags(os.Args)
 }

@@ -39,7 +39,7 @@ func ExampleCommand() {
 
 	err := rootCommand.Execute()
 	if err != nil {
-		rootCommand.Logger().Log("ERROR:", err)
+		_ = rootCommand.Logger().Log("ERROR:", err)
 		os.Exit(1)
 	}
 	// Output:
@@ -60,7 +60,7 @@ func ExampleCommand_Usage() {
 
 	err := rootCommand.Execute()
 	if err != nil {
-		rootCommand.Logger().Log("ERROR:", err)
+		_ = rootCommand.Logger().Log("ERROR:", err)
 		os.Exit(1)
 	}
 	// Output:
@@ -97,7 +97,7 @@ func ExampleCommand_subCommand() {
 
 	err := rootCommand.Execute()
 	if err != nil {
-		rootCommand.Logger().Log("ERROR:", err)
+		_ = rootCommand.Logger().Log("ERROR:", err)
 		os.Exit(1)
 	}
 	// Output:
@@ -127,7 +127,7 @@ func ExampleCommand_subCommand_usage() {
 
 	err := rootCommand.Execute()
 	if err != nil {
-		rootCommand.Logger().Log("ERROR:", err)
+		_ = rootCommand.Logger().Log("ERROR:", err)
 		os.Exit(1)
 	}
 	// Output:

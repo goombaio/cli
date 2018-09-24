@@ -34,36 +34,28 @@ func TestFlag(t *testing.T) {
 }
 
 func TestFlag_IsFlag_short_novalue(t *testing.T) {
-	var isFlag bool
-
-	isFlag = cli.IsFlag("-h")
+	isFlag := cli.IsFlag("-h")
 	if !isFlag {
 		t.Fatalf("-h expected to be a flag but it does not")
 	}
 }
 
 func TestFlag_IsFlag_long_novalue(t *testing.T) {
-	var isFlag bool
-
-	isFlag = cli.IsFlag("-help")
+	isFlag := cli.IsFlag("-help")
 	if !isFlag {
 		t.Fatalf("-help expected to be a flag but it does not")
 	}
 }
 
 func TestFlag_IsFlag_short_value(t *testing.T) {
-	var isFlag bool
-
-	isFlag = cli.IsFlag("-f=bar")
+	isFlag := cli.IsFlag("-f=bar")
 	if !isFlag {
 		t.Fatalf("-f=bar expected to be a flag but it does not")
 	}
 }
 
 func TestFlag_IsFlag_long_value(t *testing.T) {
-	var isFlag bool
-
-	isFlag = cli.IsFlag("-foo=bar")
+	isFlag := cli.IsFlag("-foo=bar")
 	if !isFlag {
 		t.Fatalf("-foo=bar expected to be a flag but it does not")
 	}

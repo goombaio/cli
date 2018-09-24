@@ -55,7 +55,7 @@ func ExampleCommand_usecase1() {
 
 	err := rootCommand.Execute()
 	if err != nil {
-		rootCommand.Logger().Log("ERROR:", err)
+		_ = rootCommand.Logger().Log("ERROR:", err)
 		os.Exit(1)
 	}
 	// Output:
