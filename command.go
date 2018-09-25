@@ -55,8 +55,8 @@ type Command struct {
 	// Run is the actual work that the command will do when it is invoked.
 	Run func(c *Command) error
 
-	// output is where (an io.Writer) the reults will be printed
-	output io.Writer
+	// loggerOutput is where (an io.Writer) the reults will be printed
+	loggerOutput io.Writer
 
 	// logger is the log.Logger being used
 	logger log.Logger
@@ -78,7 +78,7 @@ func NewCommand(name string, shortDescription string) *Command {
 
 		Run: func(c *Command) error { return nil },
 
-		output: os.Stdout,
+		loggerOutput: os.Stdout,
 
 		logger: log.NewNopLogger(),
 	}
@@ -145,14 +145,14 @@ func (c *Command) FlagName(name string) *Flag {
 
 // Output retuns the destination for usage and error messages of this command.
 //
-// By default a Command uses os.Stderr as output.
+// By default a Command uses os.Stdout as output.
 func (c *Command) Output() io.Writer {
-	return c.output
+	return c.loggerOutput
 }
 
 // SetOutput sets the destination for usage and error messages.
 func (c *Command) SetOutput(output io.Writer) {
-	c.output = output
+	c.loggerOutput = output
 }
 
 // Logger returns the current log.Logger for this Command.
@@ -177,15 +177,20 @@ func (c *Command) AddFlag(flag *Flag) {
 	c.flags = append(c.flags, flag)
 }
 
-// Execute executes the command.
+// Execute executes the root command.
 //
 // Execute uses the command arguments and run through the command tree finding
 // appropriate matches for commands and then corresponding flags.
 func (c *Command) Execute() error {
+	// Parse commands ans subcommands from the cli, routing to the command it
+	// Will be selected for execution.
 	cmd := c.ParseCommands(c.Arguments())
 
+	// Parses flags and arguments for the selected command for execution.
 	cmd = cmd.ParseFlags(c.Arguments())
 
+	// If the special flags '-h', or '-help' are present on the current
+	// parsed flags execute the Usage() method for the command.
 	for _, flag := range cmd.Flags() {
 		if flag.ShortName == "-h" || flag.LongName == "-help" {
 			if flag.Parsed {
@@ -195,6 +200,7 @@ func (c *Command) Execute() error {
 		}
 	}
 
+	// In other case run the command action.
 	err := cmd.Run(cmd)
 
 	return err
