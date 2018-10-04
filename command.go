@@ -80,7 +80,7 @@ func NewCommand(name string, shortDescription string) *Command {
 
 		loggerOutput: os.Stdout,
 
-		logger: log.NewNopLogger(),
+		logger: log.NewNoopLogger(),
 	}
 
 	// Default Flags
