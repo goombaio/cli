@@ -18,6 +18,7 @@
 package cli
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -203,6 +204,8 @@ func (c *Command) Execute() error {
 			}
 		}
 	}
+
+	fmt.Printf("%#v", cmd)
 
 	// In other case run the command action.
 	err := cmd.Run(cmd)
