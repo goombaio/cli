@@ -18,7 +18,6 @@
 package cli
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -80,7 +79,7 @@ func NewCommand(name string, shortDescription string) *Command {
 
 		Run: func(c *Command) error { return nil },
 
-		loggerOutput: os.Stdout,
+		loggerOutput: ioutil.Discard,
 
 		logger: log.NewNoopLogger(),
 	}
@@ -204,8 +203,6 @@ func (c *Command) Execute() error {
 			}
 		}
 	}
-
-	fmt.Printf("%#v", cmd)
 
 	// In other case run the command action.
 	err := cmd.Run(cmd)

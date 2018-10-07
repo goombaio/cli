@@ -29,6 +29,7 @@ func ExampleCommand() {
 	os.Args = []string{"programName"}
 
 	rootCommand := cli.NewCommand("programName", "rootCommand Short Description")
+	rootCommand.SetOutput(os.Stdout)
 	rootCommand.LongDescription = "rootCommand Long Description"
 	rootCommand.Run = func(c *cli.Command) error {
 		fmt.Fprintf(c.Output(), "Run %s\n", c.Name)
@@ -50,6 +51,7 @@ func ExampleCommand_Usage() {
 	os.Args = []string{"programName", "-help"}
 
 	rootCommand := cli.NewCommand("programName", "rootCommand Short Description")
+	rootCommand.SetOutput(os.Stdout)
 	rootCommand.LongDescription = "rootCommand Long Description"
 	rootCommand.Run = func(c *cli.Command) error {
 		fmt.Fprintf(c.Output(), "Run %s\n", c.Name)
@@ -78,6 +80,7 @@ func ExampleCommand_subCommand() {
 	os.Args = []string{"programName", "subCommand1"}
 
 	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.SetOutput(os.Stdout)
 	rootCommand.LongDescription = "rootCommand Long Description"
 	rootCommand.Run = func(c *cli.Command) error {
 		fmt.Printf("Running %s\n", c.Name)
@@ -108,6 +111,7 @@ func ExampleCommand_subCommand_usage() {
 	os.Args = []string{"programName", "subCommand1", "-help"}
 
 	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.SetOutput(os.Stdout)
 	rootCommand.LongDescription = "rootCommand Long Description"
 	rootCommand.Run = func(c *cli.Command) error {
 		fmt.Printf("Running %s\n", c.Name)
