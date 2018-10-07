@@ -39,6 +39,21 @@ func TestCommand(t *testing.T) {
 	}
 }
 
+func TestCommand_withoutConstructor(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := &cli.Command{
+		Name:             "programName",
+		ShortDescription: "rootCommand Description",
+		LongDescription:  "rootCommand Long Description",
+	}
+
+	err := cli.Execute(rootCommand)
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+}
+
 func TestCommand_Execute(t *testing.T) {
 	os.Args = []string{"programName"}
 
@@ -51,7 +66,38 @@ func TestCommand_Execute(t *testing.T) {
 	}
 }
 
+func TestCommand_withoutConstructor_Execute(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := &cli.Command{
+		Name:             "programName",
+		ShortDescription: "rootCommand Description",
+		LongDescription:  "rootCommand Long Description",
+	}
+
+	err := cli.Execute(rootCommand)
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+}
+
 func TestCommand_Name(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := cli.NewCommand("programName", "rootCommand Description")
+	rootCommand.LongDescription = "rootCommand Long Description"
+
+	if rootCommand.Name != "programName" {
+		t.Fatalf("Expected %q but got %q", "programName", rootCommand.Name)
+	}
+
+	err := rootCommand.Execute()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+}
+
+func TestCommand_withoutConstructor_Name(t *testing.T) {
 	os.Args = []string{"programName"}
 
 	rootCommand := cli.NewCommand("programName", "rootCommand Description")
@@ -83,6 +129,25 @@ func TestCommand_ShortDescription(t *testing.T) {
 	}
 }
 
+func TestCommand_withoutConstructor_ShortDescription(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := &cli.Command{
+		Name:             "programName",
+		ShortDescription: "rootCommand Description",
+		LongDescription:  "rootCommand Long Description",
+	}
+
+	if rootCommand.ShortDescription != "rootCommand Description" {
+		t.Fatalf("Expected %q but got %q", "rootCommand Description", rootCommand.ShortDescription)
+	}
+
+	err := cli.Execute(rootCommand)
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+}
+
 func TestCommand_LongDescription(t *testing.T) {
 	os.Args = []string{"programName"}
 
@@ -99,16 +164,20 @@ func TestCommand_LongDescription(t *testing.T) {
 	}
 }
 
-func TestCommand_LongDescription_Unset(t *testing.T) {
+func TestCommand_withoutConstructor_LongDescription(t *testing.T) {
 	os.Args = []string{"programName"}
 
-	rootCommand := cli.NewCommand("programName", "rootCommand Description")
-
-	if rootCommand.LongDescription != "" {
-		t.Fatalf("Expected %q but got %q", "", rootCommand.LongDescription)
+	rootCommand := &cli.Command{
+		Name:             "programName",
+		ShortDescription: "rootCommand Description",
+		LongDescription:  "rootCommand Long Description",
 	}
 
-	err := rootCommand.Execute()
+	if rootCommand.LongDescription != "rootCommand Long Description" {
+		t.Fatalf("Expected %q but got %q", "rootCommand Long Description", rootCommand.LongDescription)
+	}
+
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -121,6 +190,40 @@ func TestCommand_countCommands_countArguments_countFlags(t *testing.T) {
 	rootCommand.LongDescription = "rootCommand Long Description"
 
 	err := rootCommand.Execute()
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+
+	if len(rootCommand.Commands()) != 0 {
+		t.Fatalf("Expected 0 sub-commands but got %d", len(rootCommand.Commands()))
+	}
+
+	if len(rootCommand.Arguments()) != 0 {
+		t.Fatalf("Expected 0 arguments but got %d", len(rootCommand.Arguments()))
+	}
+
+	if len(rootCommand.Flags()) != 1 {
+		t.Fatalf("Expected 1 flags but got %d", len(rootCommand.Flags()))
+	}
+}
+
+func TestCommand_withoutConstructor_countCommands_countArguments_countFlags(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := &cli.Command{
+		Name:             "programName",
+		ShortDescription: "rootCommand Description",
+		LongDescription:  "rootCommand Long Description",
+		Run: func(c *cli.Command) error {
+			c.Usage()
+
+			return nil
+		},
+	}
+
+	rootCommand.SetOutput(ioutil.Discard)
+
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}

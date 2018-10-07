@@ -178,6 +178,7 @@ func (c *Command) AddFlag(flag *Flag) {
 // Execute uses the command arguments and run through the command tree finding
 // appropriate matches for commands and then corresponding flags.
 func (c *Command) Execute() error {
+	// Setup command default flag set
 	c.setupDefaultFlags()
 
 	// Parse commands ans subcommands from the cli, routing to the command it
@@ -198,10 +199,15 @@ func (c *Command) Execute() error {
 		}
 	}
 
-	// In other case run the command action.
-	err := cmd.Run(cmd)
+	// Run the command action if it is runnable.
+	if cmd.Run != nil {
+		err := cmd.Run(cmd)
+		if err != nil {
+			return err
+		}
+	}
 
-	return err
+	return nil
 }
 
 // setupDefaultFlags ...

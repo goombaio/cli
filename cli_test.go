@@ -16,3 +16,25 @@
 // under the License.
 
 package cli_test
+
+import (
+	"os"
+	"testing"
+
+	"github.com/goombaio/cli"
+)
+
+func TestCLI_Execute(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := &cli.Command{
+		Name:             "programName",
+		ShortDescription: "rootCommand Description",
+		LongDescription:  "rootCommand Long Description",
+	}
+
+	err := cli.Execute(rootCommand)
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+}
