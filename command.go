@@ -162,7 +162,7 @@ func (c *Command) SetLogger(logger log.Logger) {
 // AddCommand adds a subCommand to this Command.
 func (c *Command) AddCommand(cmd *Command) {
 	// Setup command default flag set
-	c.setupDefaultFlags()
+	cmd.setupDefaultFlags()
 
 	cmd.SetOutput(c.Output())
 	cmd.SetLogger(c.Logger())
