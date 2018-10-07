@@ -1,4 +1,4 @@
-// Copyright 2018, Goomba project Authors. All rights reserved.
+// Copyright © 2018, Goomba project Authors. All rights reserved.
 //
 // Licensed to the Apache Software Foundation (ASF) under one or more
 // contributor license agreements.  See the NOTICE file distributed with this
@@ -83,15 +83,6 @@ func NewCommand(name string, shortDescription string) *Command {
 		logger: log.NewNoopLogger(),
 	}
 
-	// Default Flags
-	helpFlag := &Flag{
-		ShortName:   "-h",
-		LongName:    "-help",
-		Description: "Show help message",
-		Value:       "false",
-	}
-	cmd.flags = append(cmd.flags, helpFlag)
-
 	return cmd
 }
 
@@ -143,7 +134,7 @@ func (c *Command) FlagName(name string) *Flag {
 	return nil
 }
 
-// Output retuns the destination for usage and error messages of this command.
+// Output return the destination for usage and error messages of this command.
 //
 // By default a Command uses os.Stdout as output.
 func (c *Command) Output() io.Writer {
@@ -170,6 +161,8 @@ func (c *Command) SetLogger(logger log.Logger) {
 
 // AddCommand adds a subCommand to this Command.
 func (c *Command) AddCommand(cmd *Command) {
+	cmd.setupDefaultFlags()
+
 	cmd.SetOutput(c.Output())
 	cmd.SetLogger(c.Logger())
 	c.commands = append(c.commands, cmd)
@@ -185,6 +178,8 @@ func (c *Command) AddFlag(flag *Flag) {
 // Execute uses the command arguments and run through the command tree finding
 // appropriate matches for commands and then corresponding flags.
 func (c *Command) Execute() error {
+	c.setupDefaultFlags()
+
 	// Parse commands ans subcommands from the cli, routing to the command it
 	// Will be selected for execution.
 	cmd := c.ParseCommands(c.Arguments())
@@ -207,4 +202,16 @@ func (c *Command) Execute() error {
 	err := cmd.Run(cmd)
 
 	return err
+}
+
+// setupDefaultFlags ...
+func (c *Command) setupDefaultFlags() {
+	// help Flag
+	helpFlag := &Flag{
+		ShortName:   "-h",
+		LongName:    "-help",
+		Description: "Show help message",
+		Value:       "false",
+	}
+	c.flags = append(c.flags, helpFlag)
 }

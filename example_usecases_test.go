@@ -1,4 +1,4 @@
-// Copyright 2018, Goomba project Authors. All rights reserved.
+// Copyright © 2018, Goomba project Authors. All rights reserved.
 //
 // Licensed to the Apache Software Foundation (ASF) under one or more
 // contributor license agreements.  See the NOTICE file distributed with this
@@ -24,7 +24,7 @@ import (
 	"github.com/goombaio/cli"
 )
 
-func ExampleCommand_usecase1() {
+func ExampleCommand_useCase1() {
 	os.Args = []string{"program", "command", "subcommand", "argument1"}
 
 	rootCommand := cli.NewCommand("program", "program Description")

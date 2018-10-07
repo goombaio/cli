@@ -1,4 +1,4 @@
-// Copyright 2018, Goomba project Authors. All rights reserved.
+// Copyright © 2018, Goomba project Authors. All rights reserved.
 //
 // Licensed to the Apache Software Foundation (ASF) under one or more
 // contributor license agreements.  See the NOTICE file distributed with this
@@ -34,28 +34,6 @@ func TestCommand(t *testing.T) {
 	rootCommand.LongDescription = "rootCommand Long Description"
 
 	err := rootCommand.Execute()
-	if err != nil {
-		t.Fatalf("Expected no error but got %s", err)
-	}
-}
-
-func TestCommand_withoutConstructor(t *testing.T) {
-	os.Args = []string{"programName"}
-
-	rootCommand := &cli.Command{
-		Name:             "programName",
-		ShortDescription: "rootCommand Description",
-		LongDescription:  "rootCommand Long Description",
-		Run: func(c *cli.Command) error {
-			c.Usage()
-
-			return nil
-		},
-	}
-
-	rootCommand.SetOutput(ioutil.Discard)
-
-	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -238,6 +216,13 @@ func TestCommand_Flags(t *testing.T) {
 	subCommand1.LongDescription = "subCommand1 Long Description"
 	rootCommand.AddCommand(subCommand1)
 
+	rootCommand.SetOutput(ioutil.Discard)
+
+	err := cli.Execute(rootCommand)
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+
 	if len(rootCommand.Flags()) != 1 {
 		t.Fatalf("Expected 1 flags but got %d", len(rootCommand.Flags()))
 	}
@@ -252,6 +237,13 @@ func TestCommand_Flag(t *testing.T) {
 	subCommand1 := cli.NewCommand("subCommand1", "subCommand1 Description")
 	subCommand1.LongDescription = "subCommand1 Long Description"
 	rootCommand.AddCommand(subCommand1)
+
+	rootCommand.SetOutput(ioutil.Discard)
+
+	err := cli.Execute(rootCommand)
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
 
 	if rootCommand.Flag(0).ShortName != "-h" {
 		t.Fatalf("Expected -h but got %s", rootCommand.Flag(0).ShortName)
