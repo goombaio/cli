@@ -28,6 +28,7 @@ func ExampleCommand_usecase1() {
 	os.Args = []string{"program", "command", "subcommand", "argument1"}
 
 	rootCommand := cli.NewCommand("program", "program Description")
+	rootCommand.SetOutput(os.Stdout)
 	rootCommand.LongDescription = "program Long Description"
 	rootCommand.Run = func(c *cli.Command) error {
 		c.Usage()

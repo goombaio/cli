@@ -38,6 +38,26 @@ func TestCommand(t *testing.T) {
 	}
 }
 
+func TestCommand_withoutConstructor(t *testing.T) {
+	os.Args = []string{"programName"}
+
+	rootCommand := &cli.Command{
+		Name:             "programName",
+		ShortDescription: "rootCommand Description",
+		LongDescription:  "rootCommand Long Description",
+		Run: func(c *cli.Command) error {
+			c.Usage()
+
+			return nil
+		},
+	}
+
+	err := cli.Execute(rootCommand)
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+}
+
 func TestCommand_Execute(t *testing.T) {
 	os.Args = []string{"programName"}
 
