@@ -166,7 +166,8 @@ func (c *Command) AddCommand(cmd *Command) {
 
 	cmd.SetOutput(c.Output())
 	cmd.SetLogger(c.Logger())
-
+	cmd.SetOutput(c.Output())
+	cmd.SetLogger(c.Logger())
 	c.commands = append(c.commands, cmd)
 }
 
@@ -215,7 +216,10 @@ func (c *Command) execute() error {
 	return nil
 }
 
-// setupDefaultFlags ...
+// setupDefaultFlags adds default flags that all commands must support.
+//
+// Currently:
+//		-h, -help
 func (c *Command) setupDefaultFlags() {
 	// help Flag
 	helpFlag := &Flag{
