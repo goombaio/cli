@@ -42,7 +42,44 @@ func TestCommand_Usage(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCommand.SetOutput(buf)
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
+	if err != nil {
+		t.Fatalf("Expected no error but got %s", err)
+	}
+
+	expected := fmt.Sprintf("usage: %s [-help] <command> [args]\n", rootCommand.Name)
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("  %s\n", rootCommand.LongDescription)
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("Flags:\n")
+	for _, flag := range rootCommand.Flags() {
+		expected += fmt.Sprintf("  %s, %s	%s\n", flag.ShortName, flag.LongName, flag.Description)
+	}
+	expected += fmt.Sprintf("\n")
+	expected += fmt.Sprintf("Use %s [command] -help for more information about a command.\n", rootCommand.Name)
+	if buf.String() != expected {
+		t.Fatalf("Expected %q but got %q", expected, buf.String())
+	}
+}
+
+func TestCommand_withoutConstructor_Usage(t *testing.T) {
+	rootCommand := &cli.Command{
+		Name:             "programName",
+		ShortDescription: "rootCommand Description",
+		LongDescription:  "rootCommand Long Description",
+		Run: func(c *cli.Command) error {
+			c.Usage()
+
+			return nil
+		},
+	}
+
+	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
+
+	buf := new(bytes.Buffer)
+	rootCommand.SetOutput(buf)
+
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -86,7 +123,7 @@ func TestCommand_Usage_withSubCommands(t *testing.T) {
 	}
 	rootCommand.AddCommand(subCommand1)
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -135,7 +172,7 @@ func TestCommand_Usage_subCommand(t *testing.T) {
 	}
 	rootCommand.AddCommand(subCommand1)
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}

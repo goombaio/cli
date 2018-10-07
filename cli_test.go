@@ -18,65 +18,23 @@
 package cli_test
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
 	"github.com/goombaio/cli"
 )
 
-func TestCommand_withoutConstructor(t *testing.T) {
+func TestCLI_Execute(t *testing.T) {
 	os.Args = []string{"programName"}
 
 	rootCommand := &cli.Command{
 		Name:             "programName",
 		ShortDescription: "rootCommand Description",
 		LongDescription:  "rootCommand Long Description",
-		Run: func(c *cli.Command) error {
-			c.Usage()
-
-			return nil
-		},
 	}
-
-	rootCommand.SetOutput(ioutil.Discard)
 
 	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
-	}
-}
-
-func TestCommand_withoutConstructor_countCommands_countArguments_countFlags(t *testing.T) {
-	os.Args = []string{"programName"}
-
-	rootCommand := &cli.Command{
-		Name:             "programName",
-		ShortDescription: "rootCommand Description",
-		LongDescription:  "rootCommand Long Description",
-		Run: func(c *cli.Command) error {
-			c.Usage()
-
-			return nil
-		},
-	}
-
-	rootCommand.SetOutput(ioutil.Discard)
-
-	err := cli.Execute(rootCommand)
-	if err != nil {
-		t.Fatalf("Expected no error but got %s", err)
-	}
-
-	if len(rootCommand.Commands()) != 0 {
-		t.Fatalf("Expected 0 sub-commands but got %d", len(rootCommand.Commands()))
-	}
-
-	if len(rootCommand.Arguments()) != 0 {
-		t.Fatalf("Expected 0 arguments but got %d", len(rootCommand.Arguments()))
-	}
-
-	if len(rootCommand.Flags()) != 1 {
-		t.Fatalf("Expected 1 flags but got %d", len(rootCommand.Flags()))
 	}
 }
