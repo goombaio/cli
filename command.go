@@ -161,10 +161,12 @@ func (c *Command) SetLogger(logger log.Logger) {
 
 // AddCommand adds a subCommand to this Command.
 func (c *Command) AddCommand(cmd *Command) {
-	cmd.setupDefaultFlags()
+	// Setup command default flag set
+	c.setupDefaultFlags()
 
 	cmd.SetOutput(c.Output())
 	cmd.SetLogger(c.Logger())
+
 	c.commands = append(c.commands, cmd)
 }
 
@@ -173,13 +175,16 @@ func (c *Command) AddFlag(flag *Flag) {
 	c.flags = append(c.flags, flag)
 }
 
-// Execute executes the root command.
+// execute executes the command.
 //
 // Execute uses the command arguments and run through the command tree finding
 // appropriate matches for commands and then corresponding flags.
-func (c *Command) Execute() error {
+func (c *Command) execute() error {
 	// Setup command default flag set
 	c.setupDefaultFlags()
+
+	c.SetOutput(c.Output())
+	c.SetLogger(c.Logger())
 
 	// Parse commands ans subcommands from the cli, routing to the command it
 	// Will be selected for execution.

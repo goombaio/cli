@@ -54,7 +54,7 @@ func ExampleCommand_useCase1() {
 	}
 	commandCommand.AddCommand(subcommandCommand)
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		_ = rootCommand.Logger().Log("ERROR:", err)
 		os.Exit(1)

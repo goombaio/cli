@@ -33,7 +33,7 @@ func TestCommand(t *testing.T) {
 	rootCommand := cli.NewCommand("programName", "rootCommand Description")
 	rootCommand.LongDescription = "rootCommand Long Description"
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -60,7 +60,7 @@ func TestCommand_Execute(t *testing.T) {
 	rootCommand := cli.NewCommand("programName", "rootCommand Description")
 	rootCommand.LongDescription = "rootCommand Long Description"
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -91,7 +91,7 @@ func TestCommand_Name(t *testing.T) {
 		t.Fatalf("Expected %q but got %q", "programName", rootCommand.Name)
 	}
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -107,7 +107,7 @@ func TestCommand_withoutConstructor_Name(t *testing.T) {
 		t.Fatalf("Expected %q but got %q", "programName", rootCommand.Name)
 	}
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -123,7 +123,7 @@ func TestCommand_ShortDescription(t *testing.T) {
 		t.Fatalf("Expected %q but got %q", "rootCommand Description", rootCommand.ShortDescription)
 	}
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -158,7 +158,7 @@ func TestCommand_LongDescription(t *testing.T) {
 		t.Fatalf("Expected %q but got %q", "rootCommand Long Description", rootCommand.LongDescription)
 	}
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -189,7 +189,7 @@ func TestCommand_countCommands_countArguments_countFlags(t *testing.T) {
 	rootCommand := cli.NewCommand("programName", "rootCommand Description")
 	rootCommand.LongDescription = "rootCommand Long Description"
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -378,7 +378,7 @@ func TestCommand_SetOutput(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCommand.SetOutput(buf)
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -408,7 +408,7 @@ func TestCommand_Output(t *testing.T) {
 		t.Fatalf("Expected %#v but got %#v", buf, output)
 	}
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}

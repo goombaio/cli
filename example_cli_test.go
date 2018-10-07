@@ -37,7 +37,7 @@ func ExampleCommand() {
 	}
 	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		_ = rootCommand.Logger().Log("ERROR:", err)
 		os.Exit(1)
@@ -58,7 +58,7 @@ func ExampleCommand_Usage() {
 	}
 	rootCommand.SetLogger(log.NewFmtLogger(os.Stderr))
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		_ = rootCommand.Logger().Log("ERROR:", err)
 		os.Exit(1)
@@ -95,7 +95,7 @@ func ExampleCommand_subCommand() {
 	}
 	rootCommand.AddCommand(subCommand1)
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		_ = rootCommand.Logger().Log("ERROR:", err)
 		os.Exit(1)
@@ -125,7 +125,7 @@ func ExampleCommand_subCommand_usage() {
 	}
 	rootCommand.AddCommand(subCommand1)
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		_ = rootCommand.Logger().Log("ERROR:", err)
 		os.Exit(1)

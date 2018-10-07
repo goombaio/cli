@@ -42,7 +42,7 @@ func TestCommand_Usage(t *testing.T) {
 	buf := new(bytes.Buffer)
 	rootCommand.SetOutput(buf)
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -123,7 +123,7 @@ func TestCommand_Usage_withSubCommands(t *testing.T) {
 	}
 	rootCommand.AddCommand(subCommand1)
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
@@ -172,7 +172,7 @@ func TestCommand_Usage_subCommand(t *testing.T) {
 	}
 	rootCommand.AddCommand(subCommand1)
 
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}
