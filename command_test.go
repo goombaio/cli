@@ -52,9 +52,7 @@ func TestCommand_withoutConstructor(t *testing.T) {
 		},
 	}
 
-	fmt.Printf("%#v", rootCommand)
-
-	err := rootCommand.Execute()
+	err := cli.Execute(rootCommand)
 	if err != nil {
 		t.Fatalf("Expected no error but got %s", err)
 	}

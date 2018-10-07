@@ -18,8 +18,8 @@
 package cli
 
 import (
-	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 
 	"github.com/goombaio/log"
@@ -146,8 +146,11 @@ func (c *Command) FlagName(name string) *Flag {
 
 // Output retuns the destination for usage and error messages of this command.
 //
-// By default a Command uses os.Stdout as output.
+// By default a Command uses ioutil.Discard as output.
 func (c *Command) Output() io.Writer {
+	if c.loggerOutput == nil {
+		c.loggerOutput = ioutil.Discard
+	}
 	return c.loggerOutput
 }
 
@@ -200,8 +203,6 @@ func (c *Command) Execute() error {
 			}
 		}
 	}
-
-	fmt.Printf("%#v", cmd)
 
 	// In other case run the command action.
 	err := cmd.Run(cmd)
