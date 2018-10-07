@@ -19,7 +19,6 @@ package cli
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 
 	"github.com/goombaio/log"
@@ -56,8 +55,8 @@ type Command struct {
 	// Run is the actual work that the command will do when it is invoked.
 	Run func(c *Command) error
 
-	// loggerOutput is where (an io.Writer) the reults will be printed
-	loggerOutput io.Writer
+	// output is where (an io.Writer) the reults will be printed
+	output io.Writer
 
 	// logger is the log.Logger being used
 	logger log.Logger
@@ -79,7 +78,7 @@ func NewCommand(name string, shortDescription string) *Command {
 
 		Run: func(c *Command) error { return nil },
 
-		loggerOutput: ioutil.Discard,
+		output: os.Stdout,
 
 		logger: log.NewNoopLogger(),
 	}
@@ -146,17 +145,17 @@ func (c *Command) FlagName(name string) *Flag {
 
 // Output retuns the destination for usage and error messages of this command.
 //
-// By default a Command uses ioutil.Discard as output.
+// By default a Command uses os.Stdout as output.
 func (c *Command) Output() io.Writer {
-	if c.loggerOutput == nil {
-		c.loggerOutput = ioutil.Discard
+	if c.output == nil {
+		c.output = os.Stdout
 	}
-	return c.loggerOutput
+	return c.output
 }
 
 // SetOutput sets the destination for usage and error messages.
 func (c *Command) SetOutput(output io.Writer) {
-	c.loggerOutput = output
+	c.output = output
 }
 
 // Logger returns the current log.Logger for this Command.

@@ -20,6 +20,7 @@ package cli_test
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"testing"
 
@@ -51,6 +52,8 @@ func TestCommand_withoutConstructor(t *testing.T) {
 			return nil
 		},
 	}
+
+	rootCommand.SetOutput(ioutil.Discard)
 
 	err := cli.Execute(rootCommand)
 	if err != nil {
