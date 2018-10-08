@@ -41,6 +41,9 @@ type Command struct {
 	// '<this-command> -help' output.
 	LongDescription string
 
+	// Run is the actual work that the command will do when it is invoked.
+	Run func(c *Command) error
+
 	// commands are the list of subcommands that a command have associated with
 	// it.
 	commands []*Command
@@ -51,9 +54,6 @@ type Command struct {
 
 	// flags are the list of flags that a command have associated with it.
 	flags []*Flag
-
-	// Run is the actual work that the command will do when it is invoked.
-	Run func(c *Command) error
 
 	// output is where (an io.Writer) the reults will be printed
 	output io.Writer
@@ -73,10 +73,8 @@ func NewCommand(name string, shortDescription string) *Command {
 		LongDescription:  "",
 
 		commands:  make([]*Command, 0),
-		arguments: os.Args[1:],
+		arguments: make([]string, 0),
 		flags:     make([]*Flag, 0),
-
-		Run: func(c *Command) error { return nil },
 
 		output: os.Stdout,
 
@@ -161,13 +159,15 @@ func (c *Command) SetLogger(logger log.Logger) {
 
 // AddCommand adds a subCommand to this Command.
 func (c *Command) AddCommand(cmd *Command) {
+	c.arguments = os.Args[1:]
+
 	// Setup command default flag set
 	cmd.setupDefaultFlags()
 
 	cmd.SetOutput(c.Output())
+
 	cmd.SetLogger(c.Logger())
-	cmd.SetOutput(c.Output())
-	cmd.SetLogger(c.Logger())
+
 	c.commands = append(c.commands, cmd)
 }
 
@@ -184,8 +184,15 @@ func (c *Command) execute() error {
 	// Setup command default flag set
 	c.setupDefaultFlags()
 
-	c.SetOutput(c.Output())
-	c.SetLogger(c.Logger())
+	if c.output == nil {
+		c.SetOutput(os.Stdout)
+	}
+
+	if c.logger == nil {
+		c.logger = log.NewNoopLogger()
+	}
+
+	c.arguments = os.Args[1:]
 
 	// Parse commands ans subcommands from the cli, routing to the command it
 	// Will be selected for execution.

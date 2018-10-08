@@ -21,8 +21,8 @@ package cli
 //
 // Execute uses the command arguments and run through the command tree finding
 // appropriate matches for commands and then corresponding flags.
-func Execute(c *Command) error {
-	err := c.execute()
+func Execute(cmd *Command) error {
+	err := cmd.execute()
 
 	return err
 }
