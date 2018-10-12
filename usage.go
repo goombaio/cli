@@ -29,7 +29,7 @@ const (
   {{.LongDescription}}{{end}}
 {{if .Commands}}
 Commands:
-{{range .Commands}}  {{.Name}}	{{.ShortDescription}}
+{{range .Commands}}  {{.Name}}        {{.ShortDescription}}
 {{end}}{{end}}{{if .Flags}}
 Flags:
 {{range .Flags}}  {{.ShortName}}, {{.LongName}}	{{.Description}}
