@@ -134,7 +134,7 @@ func TestCommand_Usage_withSubCommands(t *testing.T) {
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Commands:\n")
 	for _, command := range rootCommand.Commands() {
-		expected += fmt.Sprintf("  %s	%s\n", command.Name, command.ShortDescription)
+		expected += fmt.Sprintf("  %s        %s\n", command.Name, command.ShortDescription)
 	}
 	expected += fmt.Sprintf("\n")
 	expected += fmt.Sprintf("Flags:\n")
